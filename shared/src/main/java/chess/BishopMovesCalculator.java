@@ -17,6 +17,13 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
             }
         }
         //up left diagonal
+        for (int i = 1; position.getRow() + i <= 8 && position.getColumn() - i >= 1; i++) {
+            endPos = new ChessPosition(position.getRow()+i, position.getColumn()-i);
+            if (!addValidMove(board, position, endPos, validMoves)) {
+                break;
+            }
+        }
+        //down right diagonal
         for (int i = 1; position.getRow() - i >= 1 && position.getColumn() + i <= 8; i++) {
             endPos = new ChessPosition(position.getRow()-i, position.getColumn()+i);
             if (!addValidMove(board, position, endPos, validMoves)) {
@@ -26,13 +33,6 @@ public class BishopMovesCalculator implements PieceMovesCalculator {
         //down left diagonal
         for (int i = 1; position.getRow() - i >= 1 && position.getColumn() - i >= 1; i++) {
             endPos = new ChessPosition(position.getRow()-i, position.getColumn()-i);
-            if (!addValidMove(board, position, endPos, validMoves)) {
-                break;
-            }
-        }
-        //down right diagonal
-        for (int i = 1; position.getRow() + i <= 8 && position.getColumn() - i >= 1; i++) {
-            endPos = new ChessPosition(position.getRow()+i, position.getColumn()-i);
             if (!addValidMove(board, position, endPos, validMoves)) {
                 break;
             }

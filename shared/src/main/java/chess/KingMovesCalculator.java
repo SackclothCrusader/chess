@@ -10,30 +10,29 @@ public class KingMovesCalculator implements PieceMovesCalculator{
         ChessPosition endPos;
 
         //top
-        endPos = new ChessPosition(position.getRow(), position.getColumn()+1);
-        addValidMove(board, position, endPos, validMoves);
-        //top left
-        endPos = new ChessPosition(position.getRow()-1, position.getColumn()+1);
-        addValidMove(board, position, endPos, validMoves);
-        //top right
-        endPos = new ChessPosition(position.getRow()+1, position.getColumn()+1);
-        addValidMove(board, position, endPos, validMoves);
-
-        //left
-        endPos = new ChessPosition(position.getRow()-1, position.getColumn());
-        addValidMove(board, position, endPos, validMoves);
-        //right
         endPos = new ChessPosition(position.getRow()+1, position.getColumn());
         addValidMove(board, position, endPos, validMoves);
-
         //bot
+        endPos = new ChessPosition(position.getRow()-1, position.getColumn());
+        addValidMove(board, position, endPos, validMoves);
+        //left
         endPos = new ChessPosition(position.getRow(), position.getColumn()-1);
+        addValidMove(board, position, endPos, validMoves);
+        //right
+        endPos = new ChessPosition(position.getRow(), position.getColumn()+1);
+        addValidMove(board, position, endPos, validMoves);
+
+        //top left
+        endPos = new ChessPosition(position.getRow()+1, position.getColumn()-1);
         addValidMove(board, position, endPos, validMoves);
         //bot left
         endPos = new ChessPosition(position.getRow()-1, position.getColumn()-1);
         addValidMove(board, position, endPos, validMoves);
-        //bot right
-        endPos = new ChessPosition(position.getRow()+1, position.getColumn()-1);
+        //bottom right
+        endPos = new ChessPosition(position.getRow()-1, position.getColumn()+1);
+        addValidMove(board, position, endPos, validMoves);
+        //top right
+        endPos = new ChessPosition(position.getRow()+1, position.getColumn()+1);
         addValidMove(board, position, endPos, validMoves);
 
         return validMoves;

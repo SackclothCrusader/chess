@@ -9,28 +9,28 @@ public class KnightMovesCalculator implements PieceMovesCalculator{
         ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>();
         ChessPosition endPos;
 
-        // up, left
+        // right, down
         endPos = new ChessPosition(position.getRow()-1, position.getColumn()+2);
         addValidMove(board, position, endPos, validMoves);
-        //up, right
+        //right, up
         endPos = new ChessPosition(position.getRow()+1, position.getColumn()+2);
         addValidMove(board, position, endPos, validMoves);
-        //down, left
+        //left, down
         endPos = new ChessPosition(position.getRow()-1, position.getColumn()-2);
         addValidMove(board, position, endPos, validMoves);
-        //down, right
+        //left, up
         endPos = new ChessPosition(position.getRow()+1, position.getColumn()-2);
         addValidMove(board, position, endPos, validMoves);
-        //left, up
+        //down, right
         endPos = new ChessPosition(position.getRow()-2, position.getColumn()+1);
         addValidMove(board, position, endPos, validMoves);
-        //left, down
+        //down, left
         endPos = new ChessPosition(position.getRow()-2, position.getColumn()+1);
         addValidMove(board, position, endPos, validMoves);
-        //right, up
+        //up, right
         endPos = new ChessPosition(position.getRow()+2, position.getColumn()+1);
         addValidMove(board, position, endPos, validMoves);
-        //right, down
+        //up, left
         endPos = new ChessPosition(position.getRow()+2, position.getColumn()-1);
         addValidMove(board, position, endPos, validMoves);
 
