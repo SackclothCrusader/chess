@@ -53,6 +53,18 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+//        ChessPiece piece = board.getPiece(myPosition);
+//        ArrayList<ChessPosition> validMoves = new ArrayList<ChessPosition>();
+//        ChessPosition tmpPosition = myPosition;
+//
+//        switch (piece.getPieceType()) {
+//            case KING:
+//                tmpPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
+//                validMoves.add(tmpPosition);
+//                for (int i = 0; i < 8; i++) {
+//                }
+//                return tmpPosition;
+//        }
         return new ArrayList<>();
     }
 }
