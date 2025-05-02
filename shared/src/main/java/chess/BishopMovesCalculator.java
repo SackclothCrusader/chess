@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class BishopMovesCalculator implements PieceMovesCalculator {
+    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> validMoves = new ArrayList<>();
         ChessPosition endPos;
