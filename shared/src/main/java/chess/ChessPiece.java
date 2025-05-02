@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -13,6 +14,20 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
     private final PieceType type;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
@@ -53,18 +68,12 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-//        ChessPiece piece = board.getPiece(myPosition);
-//        ArrayList<ChessPosition> validMoves = new ArrayList<ChessPosition>();
-//        ChessPosition tmpPosition = myPosition;
-//
-//        switch (piece.getPieceType()) {
-//            case KING:
-//                tmpPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
-//                validMoves.add(tmpPosition);
-//                for (int i = 0; i < 8; i++) {
-//                }
-//                return tmpPosition;
-//        }
+        ChessPiece piece = board.getPiece(myPosition);
+
+        switch (piece.getPieceType()) {
+            case BISHOP:
+                return new BishopMovesCalculator().pieceMoves(board, myPosition);
+        }
         return new ArrayList<>();
     }
 }
