@@ -25,7 +25,7 @@ public class KnightMovesCalculator implements PieceMovesCalculator{
         endPos = new ChessPosition(position.getRow()-2, position.getColumn()+1);
         addValidMove(board, position, endPos, validMoves);
         //down, left
-        endPos = new ChessPosition(position.getRow()-2, position.getColumn()+1);
+        endPos = new ChessPosition(position.getRow()-2, position.getColumn()-1);
         addValidMove(board, position, endPos, validMoves);
         //up, right
         endPos = new ChessPosition(position.getRow()+2, position.getColumn()+1);
