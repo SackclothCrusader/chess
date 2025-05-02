@@ -82,7 +82,7 @@ public class ChessPiece {
             case KING:
                 return new KingMovesCalculator().pieceMoves(board, myPosition);
             case PAWN:
-
+                return new PawnMovesCalculator().pieceMoves(board, myPosition);
         }
         return new ArrayList<>();
     }
