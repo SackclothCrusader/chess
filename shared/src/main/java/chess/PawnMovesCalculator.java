@@ -30,12 +30,45 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>();
-        ChessMove endPos;
+        ChessPosition endPos;
+        ChessPiece pawn = board.getPiece(position);
         final int WHITE_START_ROW = 2;
         final int BLACK_START_ROW = 7;
+        final int WHITE_PROMOTION_ROW = 8;
+        final int BLACK_PROMOTION_ROW = 1;
 
         //for white
-        if (position.getRow())
+        if (pawn.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            //first move (for loop works better for if it's blocked)
+            if (position.getRow() == WHITE_START_ROW) {
+                for (int i = 1; i <= 2; i++) {
+                    endPos = new ChessPosition(position.getRow()+i, position.getColumn());
+                    if (!addValidMove(board, position, endPos, validMoves)) {
+                        break;
+                    }
+                }
+            }
+            //not first move
+            else {
+                endPos = new ChessPosition(position.getRow()+1, position.getColumn());
+                addValidMove(board, position, endPos, validMoves);
+            }
+
+            //capture left
+            endPos = new ChessPosition(position.getRow()+1, position.getColumn()-1);
+            if (board.getPiece(endPos).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                addValidMove(board, position, endPos, validMoves);
+            }
+
+            //capture right
+            endPos = new ChessPosition(position.getRow()+1, position.getColumn()+1);
+            if (board.getPiece(endPos).getTeamColor() == ChessGame.TeamColor.BLACK) {
+                addValidMove(board, position, endPos, validMoves);
+            }
+
+            //promotion
+
+        }
 
         return validMoves;
     }
