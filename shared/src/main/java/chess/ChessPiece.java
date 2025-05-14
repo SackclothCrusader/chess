@@ -72,17 +72,17 @@ public class ChessPiece {
 
         switch (piece.getPieceType()) {
             case BISHOP:
-                return new BishopMovesCalculator().pieceMoves(board, myPosition);
+                return new BishopMoveCalc().moveCalc(board, myPosition);
             case KNIGHT:
-                return new KnightMovesCalculator().pieceMoves(board, myPosition);
+                return new KnightMoveCalc().moveCalc(board, myPosition);
             case ROOK:
-                return new RookMovesCalculator().pieceMoves(board, myPosition);
+                return new RookMoveCalc().moveCalc(board, myPosition);
             case QUEEN:
-                return new QueenMovesCalculator().pieceMoves(board, myPosition);
+                return new QueenMoveCalc().moveCalc(board, myPosition);
             case KING:
-                return new KingMovesCalculator().pieceMoves(board, myPosition);
+                return new KingMoveCalc().moveCalc(board, myPosition);
             case PAWN:
-                return new PawnMovesCalculator().pieceMoves(board, myPosition);
+                return new PawnMoveCalc().moveCalc(board, myPosition);
         }
         return new ArrayList<>();
     }
