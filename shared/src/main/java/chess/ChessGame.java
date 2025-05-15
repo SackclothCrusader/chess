@@ -81,6 +81,20 @@ public class ChessGame {
         BLACK;
     }
 
+
+    private ChessPosition getKing(ChessBoard board, TeamColor teamColor) {
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                ChessPosition pos = new ChessPosition(i, j);
+                ChessPiece p = board.getPiece(pos);
+                if (p != null && p.getPieceType() == ChessPiece.PieceType.KING && p.getTeamColor() == teamColor) {
+                    return pos;
+                }
+            }
+        }
+        return null; // Shouldn't happen unless king is captured
+    }
+
     private boolean testCheck(ChessBoard board, TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE) {
             for(int i = 1; i <= 8; i++) {
@@ -89,7 +103,7 @@ public class ChessGame {
                     ChessPiece enemy = board.getPiece(tmp);
                     if (enemy != null && enemy.getTeamColor() == TeamColor.BLACK) {
                         for (ChessMove move : enemy.pieceMoves(board, tmp)) {
-                            if (move.getEndPosition().equals(whiteKing)) {
+                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
                                 return true;
                             }
                         }
@@ -104,7 +118,7 @@ public class ChessGame {
                     ChessPiece enemy = board.getPiece(tmp);
                     if (enemy != null && enemy.getTeamColor() == TeamColor.WHITE) {
                         for (ChessMove move : enemy.pieceMoves(board, tmp)) {
-                            if (move.getEndPosition().equals(blackKing)) {
+                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
                                 return true;
                             }
                         }
