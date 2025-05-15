@@ -45,27 +45,13 @@ public class ChessGame {
         teamToPlay = team;
     }
 
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
         WHITE,
-        BLACK
-    }
-
-    /**
-     * Gets a valid moves for a piece at the given location
-     *
-     * @param startPosition the piece to get valid moves for
-     * @return Set of valid moves for requested piece, or null if no piece at
-     * startPosition
-     */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece tmp =  new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
-
-        Collection<ChessMove> validMoves = tmp.pieceMoves(gameBoard, startPosition);
-
-        return validMoves;
+        BLACK;
     }
 
     // finds threatened squares
@@ -135,6 +121,61 @@ public class ChessGame {
     }
 
     /**
+     * Gets a valid moves for a piece at the given location
+     *
+     * @param startPosition the piece to get valid moves for
+     * @return Set of valid moves for requested piece, or null if no piece at
+     * startPosition
+     */
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if (gameBoard.getPiece(startPosition) == null) {
+            return new ArrayList<>();
+        }
+        ChessPiece tmp =  new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
+
+        Collection<ChessMove> validMoves = tmp.pieceMoves(gameBoard, startPosition);
+
+        return validMoves;
+    }
+
+    // make list of all valid moves for teamColor
+    private void validList(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            //clear list
+            whiteValid.clear();
+            //calculate black threatened squares
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are white
+                    if (piece != null && piece.getTeamColor() == TeamColor.WHITE) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
+                        whiteValid.addAll(addMe);
+                    }
+                }
+            }
+        }
+        else {
+            //clear list
+            blackValid.clear();
+            //calculate black threatened squares
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are white
+                    if (piece != null && piece.getTeamColor() == TeamColor.BLACK) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
+                        blackValid.addAll(addMe);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
      * Makes a move in a chess game
      *
      * @param move chess move to perform
@@ -194,6 +235,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)) {
+            validList(teamColor);
             if (teamColor == TeamColor.WHITE && whiteValid.isEmpty()) {
                 return true;
             }
