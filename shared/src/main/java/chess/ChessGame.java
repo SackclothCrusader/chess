@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 
@@ -12,16 +13,20 @@ import java.util.ArrayList;
 public class ChessGame {
     TeamColor teamToPlay;
     ChessBoard gameBoard;
-    ArrayList<ChessPosition> checkGivers;
-    ArrayList<ChessPosition> whiteThreaten;
-    ArrayList<ChessPosition> blackThreaten;
-//    ArrayList<ChessPosition> WhitePieces;
-//    ArrayList<ChessPosition> BlackPieces;
+    ArrayList<ChessMove> moveHistory;
+    ChessPosition whiteKing;
+    ChessPosition blackKing;
+    ArrayList<ChessPosition> whiteThreatens;
+    ArrayList<ChessPosition> blackThreatens;
+    ArrayList<ChessMove> whiteValid;
+    ArrayList<ChessMove> blackValid;
 
     public ChessGame() {
         setTeamTurn(TeamColor.WHITE);
         setBoard(new ChessBoard());
         gameBoard.resetBoard();
+        whiteKing = new ChessPosition(1, 5);
+        blackKing = new ChessPosition(8, 5);
     }
 
     /**
@@ -56,8 +61,77 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessPiece tmp =  new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
 
-//        ChessPiece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> validMoves = tmp.pieceMoves(gameBoard, startPosition);
+
+        return validMoves;
+    }
+
+    // finds threatened squares
+    private void threatenedSquares(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            //clear threatened squares list
+            blackThreatens.clear();
+            //calculate black threatened squares
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are black
+                    if (piece != null && piece.getTeamColor() == TeamColor.BLACK) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(piece.pieceMoves(getBoard(), start));
+
+                        //special pawn logic
+                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                            for (int k = 0; k < addMe.size(); k++) {
+                                if (addMe.get(i).getEndPosition().getColumn() == start.getColumn()) {
+                                    addMe.remove(i);
+                                    k--;
+                                }
+                            }
+                        }
+                        //extract end positions and add to blackThreatens
+                        ArrayList<ChessPosition> tmp = new ArrayList<>();
+                        for (ChessMove move : addMe) {
+                            tmp.add(move.getEndPosition());
+                        }
+                        blackThreatens.addAll(tmp);
+                    }
+                }
+            }
+        }
+        else {
+            //clear threatened squares list
+            whiteThreatens.clear();
+            //calculate white threatened squares
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are white
+                    if (piece != null && piece.getTeamColor() == TeamColor.WHITE) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(piece.pieceMoves(getBoard(), start));
+
+                        //special pawn logic
+                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                            for (int k = 0; k < addMe.size(); k++) {
+                                if (addMe.get(i).getEndPosition().getColumn() == start.getColumn()) {
+                                    addMe.remove(i);
+                                    k--;
+                                }
+                            }
+                        }
+                        //extract end positions and add to whiteThreatens
+                        ArrayList<ChessPosition> tmp = new ArrayList<>();
+                        for (ChessMove move : addMe) {
+                            tmp.add(move.getEndPosition());
+                        }
+                        whiteThreatens.addAll(tmp);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -67,7 +141,21 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        for(ChessMove i : validMoves) {
+            if (i == move) {
+                gameBoard.movePiece(move);
+                moveHistory.add(move);
+                if (teamToPlay == TeamColor.WHITE && move.getStartPosition() == whiteKing) {
+                    whiteKing = move.getEndPosition();
+                }
+                else if (teamToPlay == TeamColor.BLACK && move.getStartPosition() == blackKing) {
+                    blackKing = move.getEndPosition();
+                }
+                break;
+            }
+        }
+        throw new InvalidMoveException();
     }
 
     /**
@@ -77,7 +165,25 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        threatenedSquares(teamColor);
+        if (teamColor == TeamColor.WHITE) {
+            //find king in threatened squares
+            for (ChessPosition i : blackThreatens) {
+                if (whiteKing == i) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        else {
+            //find king in threatened squares
+            for (ChessPosition i : whiteThreatens) {
+                if (blackKing == i) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     /**
@@ -87,7 +193,15 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)) {
+            if (teamColor == TeamColor.WHITE && whiteValid.isEmpty()) {
+                return true;
+            }
+            else if (teamColor == TeamColor.BLACK && blackValid.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -98,7 +212,13 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (teamColor == TeamColor.WHITE && whiteValid.isEmpty()) {
+            return true;
+        }
+        else if (teamColor == TeamColor.BLACK && blackValid.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     /**

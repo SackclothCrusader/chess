@@ -10,12 +10,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] board;
     private final int BOARD_OFFSET = 1;
 
     @Override
     public String toString() {
-        return "ChessBoard{" + "squares=" + Arrays.toString(squares) + ".";
+        return "ChessBoard{" + "squares=" + Arrays.toString(board) + ".";
     }
 
     @Override
@@ -24,16 +24,16 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        return BOARD_OFFSET == that.BOARD_OFFSET && Objects.deepEquals(squares, that.squares);
+        return Objects.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.deepHashCode(squares), BOARD_OFFSET);
+        return Objects.hash(Arrays.deepHashCode(board), BOARD_OFFSET);
     }
 
     public ChessBoard() {
-        squares = new ChessPiece[8][8];
+        board = new ChessPiece[8][8];
     }
 
     /**
@@ -43,7 +43,14 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow() - BOARD_OFFSET][position.getColumn() - BOARD_OFFSET] = piece;
+        board[position.getRow() - BOARD_OFFSET][position.getColumn() - BOARD_OFFSET] = piece;
+    }
+
+    public void movePiece(ChessMove move) {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        board[end.getRow()-BOARD_OFFSET][end.getColumn()-BOARD_OFFSET] = board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET];
+        board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET] = null;
     }
 
     /**
@@ -54,7 +61,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow() - BOARD_OFFSET][position.getColumn() - BOARD_OFFSET];
+        return board[position.getRow() - BOARD_OFFSET][position.getColumn() - BOARD_OFFSET];
     }
 
     /**
@@ -62,7 +69,7 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        squares = new ChessPiece[8][8];
+        board = new ChessPiece[8][8];
 
         //setup white major pieces
         addPiece(new ChessPosition(1,1), new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
