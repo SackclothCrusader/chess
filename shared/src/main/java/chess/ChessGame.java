@@ -56,22 +56,6 @@ public class ChessGame {
         blackValid = new ArrayList<>();
     }
 
-    /**
-     * @return Which team's turn it is
-     */
-    public TeamColor getTeamTurn() {
-        return teamToPlay;
-    }
-
-    /**
-     * Set's which teams turn it is
-     *
-     * @param team the team whose turn it is
-     */
-    public void setTeamTurn(TeamColor team) {
-        teamToPlay = team;
-    }
-
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -79,8 +63,8 @@ public class ChessGame {
     public enum TeamColor {
         WHITE,
         BLACK;
-    }
 
+    }
 
     private ChessPosition getKing(ChessBoard board, TeamColor teamColor) {
         for (int i = 1; i <= 8; i++) {
@@ -93,40 +77,6 @@ public class ChessGame {
             }
         }
         return null; // Shouldn't happen unless king is captured
-    }
-
-    private boolean testCheck(ChessBoard board, TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE) {
-            for(int i = 1; i <= 8; i++) {
-                for(int j = 1; j <= 8; j++) {
-                    ChessPosition tmp = new ChessPosition(i, j);
-                    ChessPiece enemy = board.getPiece(tmp);
-                    if (enemy != null && enemy.getTeamColor() == TeamColor.BLACK) {
-                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
-                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        else {
-            for(int i = 1; i <= 8; i++) {
-                for(int j = 1; j <= 8; j++) {
-                    ChessPosition tmp = new ChessPosition(i, j);
-                    ChessPiece enemy = board.getPiece(tmp);
-                    if (enemy != null && enemy.getTeamColor() == TeamColor.WHITE) {
-                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
-                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -162,42 +112,6 @@ public class ChessGame {
         }
 
         return validMoves;
-    }
-
-    // make list of all valid moves for teamColor
-    private void validList(TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE) {
-            //clear list
-            whiteValid.clear();
-            //calculate black threatened squares
-            for (int i = 1; i <= 8; i++) {
-                for (int j = 1; j <= 8; j++) {
-                    ChessPosition start = new ChessPosition(i, j);
-                    ChessPiece piece = gameBoard.getPiece(start);
-                    //ensure pieces are white
-                    if (piece != null && piece.getTeamColor() == TeamColor.WHITE) {
-                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
-                        whiteValid.addAll(addMe);
-                    }
-                }
-            }
-        }
-        else {
-            //clear list
-            blackValid.clear();
-            //calculate black threatened squares
-            for (int i = 1; i <= 8; i++) {
-                for (int j = 1; j <= 8; j++) {
-                    ChessPosition start = new ChessPosition(i, j);
-                    ChessPiece piece = gameBoard.getPiece(start);
-                    //ensure pieces are white
-                    if (piece != null && piece.getTeamColor() == TeamColor.BLACK) {
-                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
-                        blackValid.addAll(addMe);
-                    }
-                }
-            }
-        }
     }
 
 
@@ -240,6 +154,42 @@ public class ChessGame {
         throw new InvalidMoveException();
     }
 
+    // make list of all valid moves for teamColor
+    private void validList(TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            //clear list
+            whiteValid.clear();
+            //calculate black threatened squares
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are white
+                    if (piece != null && piece.getTeamColor() == TeamColor.WHITE) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
+                        whiteValid.addAll(addMe);
+                    }
+                }
+            }
+        }
+        else {
+            //clear list
+            blackValid.clear();
+            //calculate black threatened squares
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPosition start = new ChessPosition(i, j);
+                    ChessPiece piece = gameBoard.getPiece(start);
+                    //ensure pieces are white
+                    if (piece != null && piece.getTeamColor() == TeamColor.BLACK) {
+                        ArrayList<ChessMove> addMe = new ArrayList<>(validMoves(start));
+                        blackValid.addAll(addMe);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Determines if the given team is in check
      *
@@ -248,6 +198,40 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         return testCheck(gameBoard, teamColor);
+    }
+
+    private boolean testCheck(ChessBoard board, TeamColor teamColor) {
+        if (teamColor == TeamColor.WHITE) {
+            for(int i = 1; i <= 8; i++) {
+                for(int j = 1; j <= 8; j++) {
+                    ChessPosition tmp = new ChessPosition(i, j);
+                    ChessPiece enemy = board.getPiece(tmp);
+                    if (enemy != null && enemy.getTeamColor() == TeamColor.BLACK) {
+                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
+                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            for(int i = 1; i <= 8; i++) {
+                for(int j = 1; j <= 8; j++) {
+                    ChessPosition tmp = new ChessPosition(i, j);
+                    ChessPiece enemy = board.getPiece(tmp);
+                    if (enemy != null && enemy.getTeamColor() == TeamColor.WHITE) {
+                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
+                            if (move.getEndPosition().equals(getKing(board, teamColor))) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -303,5 +287,21 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return gameBoard;
+    }
+
+    /**
+     * @return Which team's turn it is
+     */
+    public TeamColor getTeamTurn() {
+        return teamToPlay;
+    }
+
+    /**
+     * Set's which teams turn it is
+     *
+     * @param team the team whose turn it is
+     */
+    public void setTeamTurn(TeamColor team) {
+        teamToPlay = team;
     }
 }
