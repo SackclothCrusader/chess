@@ -3,6 +3,7 @@ package chess;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -21,10 +22,36 @@ public class ChessGame {
     ArrayList<ChessMove> whiteValid;
     ArrayList<ChessMove> blackValid;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return teamToPlay == chessGame.teamToPlay && Objects.equals(gameBoard, chessGame.gameBoard) && Objects.equals(moveHistory, chessGame.moveHistory) && Objects.equals(whiteKing, chessGame.whiteKing) && Objects.equals(blackKing, chessGame.blackKing) && Objects.equals(whiteThreatens, chessGame.whiteThreatens) && Objects.equals(blackThreatens, chessGame.blackThreatens) && Objects.equals(whiteValid, chessGame.whiteValid) && Objects.equals(blackValid, chessGame.blackValid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(teamToPlay, gameBoard, moveHistory, whiteKing, blackKing, whiteThreatens, blackThreatens, whiteValid, blackValid);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "teamToPlay=" + teamToPlay +
+                ", gameBoard=" + gameBoard +
+                ", moveHistory=" + moveHistory +
+                ", whiteKing=" + whiteKing +
+                ", blackKing=" + blackKing +
+                '}';
+    }
+
     public ChessGame() {
         setTeamTurn(TeamColor.WHITE);
         setBoard(new ChessBoard());
         gameBoard.resetBoard();
+        moveHistory = new ArrayList<>();
         whiteKing = new ChessPosition(1, 5);
         blackKing = new ChessPosition(8, 5);
     }
@@ -128,12 +155,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (gameBoard.getPiece(startPosition) == null) {
-            return new ArrayList<>();
-        }
-        ChessPiece tmp =  new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
-
+        ChessPiece tmp = new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
         Collection<ChessMove> validMoves = tmp.pieceMoves(gameBoard, startPosition);
+
+        //invalidate moves that leave player in check
 
         return validMoves;
     }
@@ -182,18 +207,33 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        //piece exists
+        if(gameBoard.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException();
+        }
+        //correct team plays
+        if(gameBoard.getPiece(move.getStartPosition()).getTeamColor() != teamToPlay) {
+            throw new InvalidMoveException();
+        }
+
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         for(ChessMove i : validMoves) {
-            if (i == move) {
+            if (i.equals(move)) {
                 gameBoard.movePiece(move);
                 moveHistory.add(move);
-                if (teamToPlay == TeamColor.WHITE && move.getStartPosition() == whiteKing) {
-                    whiteKing = move.getEndPosition();
+                if (teamToPlay == TeamColor.WHITE) {
+                    if (move.getStartPosition() == whiteKing) {
+                        whiteKing = move.getEndPosition();
+                    }
+                    setTeamTurn(TeamColor.BLACK);
                 }
-                else if (teamToPlay == TeamColor.BLACK && move.getStartPosition() == blackKing) {
-                    blackKing = move.getEndPosition();
+                else if (teamToPlay == TeamColor.BLACK) {
+                    if (move.getStartPosition() == blackKing) {
+                        blackKing = move.getEndPosition();
+                    }
+                    setTeamTurn(TeamColor.WHITE);
                 }
-                break;
+                return;
             }
         }
         throw new InvalidMoveException();
@@ -254,6 +294,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        validList(teamColor);
         if (teamColor == TeamColor.WHITE && whiteValid.isEmpty()) {
             return true;
         }
