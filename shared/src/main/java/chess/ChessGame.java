@@ -17,8 +17,6 @@ public class ChessGame {
     ArrayList<ChessMove> moveHistory;
     ChessPosition whiteKing;
     ChessPosition blackKing;
-    ArrayList<ChessPosition> whiteThreatens;
-    ArrayList<ChessPosition> blackThreatens;
     ArrayList<ChessMove> whiteValid;
     ArrayList<ChessMove> blackValid;
 
@@ -28,12 +26,12 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return teamToPlay == chessGame.teamToPlay && Objects.equals(gameBoard, chessGame.gameBoard) && Objects.equals(moveHistory, chessGame.moveHistory) && Objects.equals(whiteKing, chessGame.whiteKing) && Objects.equals(blackKing, chessGame.blackKing) && Objects.equals(whiteThreatens, chessGame.whiteThreatens) && Objects.equals(blackThreatens, chessGame.blackThreatens) && Objects.equals(whiteValid, chessGame.whiteValid) && Objects.equals(blackValid, chessGame.blackValid);
+        return teamToPlay == chessGame.teamToPlay && Objects.equals(gameBoard, chessGame.gameBoard) && Objects.equals(moveHistory, chessGame.moveHistory) && Objects.equals(whiteKing, chessGame.whiteKing) && Objects.equals(blackKing, chessGame.blackKing) && Objects.equals(whiteValid, chessGame.whiteValid) && Objects.equals(blackValid, chessGame.blackValid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(teamToPlay, gameBoard, moveHistory, whiteKing, blackKing, whiteThreatens, blackThreatens, whiteValid, blackValid);
+        return Objects.hash(teamToPlay, gameBoard, moveHistory, whiteKing, blackKing, whiteValid, blackValid);
     }
 
     @Override
@@ -54,6 +52,8 @@ public class ChessGame {
         moveHistory = new ArrayList<>();
         whiteKing = new ChessPosition(1, 5);
         blackKing = new ChessPosition(8, 5);
+        whiteValid = new ArrayList<>();
+        blackValid = new ArrayList<>();
     }
 
     /**
@@ -81,70 +81,38 @@ public class ChessGame {
         BLACK;
     }
 
-    // finds threatened squares
-    private void threatenedSquares(TeamColor teamColor) {
+    private boolean testCheck(ChessBoard board, TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE) {
-            //clear threatened squares list
-            blackThreatens.clear();
-            //calculate black threatened squares
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    ChessPosition start = new ChessPosition(i, j);
-                    ChessPiece piece = gameBoard.getPiece(start);
-                    //ensure pieces are black
-                    if (piece != null && piece.getTeamColor() == TeamColor.BLACK) {
-                        ArrayList<ChessMove> addMe = new ArrayList<>(piece.pieceMoves(getBoard(), start));
-
-                        //special pawn logic
-                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                            for (int k = 0; k < addMe.size(); k++) {
-                                if (addMe.get(i).getEndPosition().getColumn() == start.getColumn()) {
-                                    addMe.remove(i);
-                                    k--;
-                                }
+            for(int i = 1; i <= 8; i++) {
+                for(int j = 1; j <= 8; j++) {
+                    ChessPosition tmp = new ChessPosition(i, j);
+                    ChessPiece enemy = board.getPiece(tmp);
+                    if (enemy != null && enemy.getTeamColor() == TeamColor.BLACK) {
+                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
+                            if (move.getEndPosition().equals(whiteKing)) {
+                                return true;
                             }
                         }
-                        //extract end positions and add to blackThreatens
-                        ArrayList<ChessPosition> tmp = new ArrayList<>();
-                        for (ChessMove move : addMe) {
-                            tmp.add(move.getEndPosition());
-                        }
-                        blackThreatens.addAll(tmp);
                     }
                 }
             }
         }
         else {
-            //clear threatened squares list
-            whiteThreatens.clear();
-            //calculate white threatened squares
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    ChessPosition start = new ChessPosition(i, j);
-                    ChessPiece piece = gameBoard.getPiece(start);
-                    //ensure pieces are white
-                    if (piece != null && piece.getTeamColor() == TeamColor.WHITE) {
-                        ArrayList<ChessMove> addMe = new ArrayList<>(piece.pieceMoves(getBoard(), start));
-
-                        //special pawn logic
-                        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                            for (int k = 0; k < addMe.size(); k++) {
-                                if (addMe.get(i).getEndPosition().getColumn() == start.getColumn()) {
-                                    addMe.remove(i);
-                                    k--;
-                                }
+            for(int i = 1; i <= 8; i++) {
+                for(int j = 1; j <= 8; j++) {
+                    ChessPosition tmp = new ChessPosition(i, j);
+                    ChessPiece enemy = board.getPiece(tmp);
+                    if (enemy != null && enemy.getTeamColor() == TeamColor.WHITE) {
+                        for (ChessMove move : enemy.pieceMoves(board, tmp)) {
+                            if (move.getEndPosition().equals(blackKing)) {
+                                return true;
                             }
                         }
-                        //extract end positions and add to whiteThreatens
-                        ArrayList<ChessPosition> tmp = new ArrayList<>();
-                        for (ChessMove move : addMe) {
-                            tmp.add(move.getEndPosition());
-                        }
-                        whiteThreatens.addAll(tmp);
                     }
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -155,10 +123,29 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece tmp = new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
-        Collection<ChessMove> validMoves = tmp.pieceMoves(gameBoard, startPosition);
+        ChessPiece piece = new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
+        ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>(piece.pieceMoves(gameBoard, startPosition));
 
-        //invalidate moves that leave player in check
+        for(int i = 0; i < validMoves.size(); i++) {
+            //make copy of board
+            ChessBoard test = new ChessBoard();
+            for (int j = 1; j <= 8; j++) {
+                for (int k = 1; k <= 8; k++) {
+                    ChessPosition tmp = new ChessPosition(j, k);
+                    ChessPiece copyPiece = gameBoard.getPiece(tmp);
+                    if (copyPiece != null) {
+                        test.addPiece(tmp, copyPiece);
+                    }
+                }
+            }
+
+            //test the move
+            test.movePiece(validMoves.get(i));
+            if (testCheck(test, piece.getTeamColor())) {
+                validMoves.remove(i);
+                i--;
+            }
+        }
 
         return validMoves;
     }
@@ -169,8 +156,8 @@ public class ChessGame {
             //clear list
             whiteValid.clear();
             //calculate black threatened squares
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
                     ChessPosition start = new ChessPosition(i, j);
                     ChessPiece piece = gameBoard.getPiece(start);
                     //ensure pieces are white
@@ -185,8 +172,8 @@ public class ChessGame {
             //clear list
             blackValid.clear();
             //calculate black threatened squares
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
                     ChessPosition start = new ChessPosition(i, j);
                     ChessPiece piece = gameBoard.getPiece(start);
                     //ensure pieces are white
@@ -222,13 +209,13 @@ public class ChessGame {
                 gameBoard.movePiece(move);
                 moveHistory.add(move);
                 if (teamToPlay == TeamColor.WHITE) {
-                    if (move.getStartPosition() == whiteKing) {
+                    if (move.getStartPosition().equals(whiteKing)) {
                         whiteKing = move.getEndPosition();
                     }
                     setTeamTurn(TeamColor.BLACK);
                 }
                 else if (teamToPlay == TeamColor.BLACK) {
-                    if (move.getStartPosition() == blackKing) {
+                    if (move.getStartPosition().equals(blackKing)) {
                         blackKing = move.getEndPosition();
                     }
                     setTeamTurn(TeamColor.WHITE);
@@ -246,25 +233,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        threatenedSquares(teamColor);
-        if (teamColor == TeamColor.WHITE) {
-            //find king in threatened squares
-            for (ChessPosition i : blackThreatens) {
-                if (whiteKing == i) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        else {
-            //find king in threatened squares
-            for (ChessPosition i : whiteThreatens) {
-                if (blackKing == i) {
-                    return true;
-                }
-            }
-            return false;
-        }
+        return testCheck(gameBoard, teamColor);
     }
 
     /**
