@@ -66,7 +66,7 @@ public class ChessGame {
 
     }
 
-    private ChessPosition getKing(ChessBoard board, TeamColor teamColor) {
+    private ChessPosition getKing(ChessBoard board, TeamColor teamColor) { //:(
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition pos = new ChessPosition(i, j);
@@ -86,7 +86,7 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition) { //:(
         ChessPiece piece = new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
         ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>(piece.pieceMoves(gameBoard, startPosition));
 
@@ -155,7 +155,7 @@ public class ChessGame {
     }
 
     // make list of all valid moves for teamColor
-    private void validList(TeamColor teamColor) {
+    private void validList(TeamColor teamColor) { //:(
         if (teamColor == TeamColor.WHITE) {
             //clear list
             whiteValid.clear();
@@ -196,7 +196,7 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) {
+    public boolean isInCheck(TeamColor teamColor) { //:(
         return testCheck(gameBoard, teamColor);
     }
 
@@ -240,7 +240,7 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) {
+    public boolean isInCheckmate(TeamColor teamColor) { //:(
         if(isInCheck(teamColor)) {
             validList(teamColor);
             if (teamColor == TeamColor.WHITE && whiteValid.isEmpty()) {
@@ -260,7 +260,7 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
-    public boolean isInStalemate(TeamColor teamColor) {
+    public boolean isInStalemate(TeamColor teamColor) { //:(
         if (isInCheck(teamColor)) {
             return false;
         }
