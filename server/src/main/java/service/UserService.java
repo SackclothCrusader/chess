@@ -10,7 +10,7 @@ import java.util.List;
 public class UserService {
     //Register
     public Result.RegisterResult register(String username, String password, String email) {
-        if (MemoryUserDAO.getUser(username) == null) {
+        if (new MemoryUserDAO().getUser(username) == null) {
             return null;
         }
         return null;
@@ -19,5 +19,4 @@ public class UserService {
     //Login
 
     //Logout
-
 }

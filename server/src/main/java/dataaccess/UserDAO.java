@@ -7,7 +7,9 @@ public interface UserDAO {
     abstract UserData createUser(String username, String password, String email) throws DataAccessException;
 
     //R (find user)
-    abstract UserData getUser(String username);
+    static UserData getUser(String username) {
+        return null;
+    }
 
     //U (change password)
 
