@@ -2,7 +2,10 @@ package server;
 
 public class Handler {
     //authorization
-//        default boolean authorization(authToken) {}
+    private boolean authorization(String authToken){
+        return false;
+    }
+
 
     private class UserHandler extends Handler {
         //register [POST] /user
