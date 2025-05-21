@@ -1,7 +1,8 @@
 package service;
 
-import dataaccess.UserDAO;
-import dataaccess.AuthDao;
+import dataaccess.DataAccessException;
+import dataaccess.MemoryUserDAO;
+import dataaccess.MemoryAuthDAO;
 import server.Request;
 import server.Result;
 import java.util.List;
@@ -9,8 +10,8 @@ import java.util.List;
 public class UserService {
     //Register
     public Result.RegisterResult register(String username, String password, String email) {
-        if (UserDAO.getUser(username)) {
-
+        if (MemoryUserDAO.getUser(username) == null) {
+            return null;
         }
         return null;
     }
