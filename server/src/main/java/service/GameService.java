@@ -18,5 +18,9 @@ public class GameService {
     }
 
     //join game
-
+    public Result.JoinGameResult joinGame(Request.JoinGameRequest request) {
+//        GameData game = new MemoryGameDAO().createGame(request.gameName());
+//        return new Result.CreateGameResult(game.gameID());
+        return null;
+    }
 }
