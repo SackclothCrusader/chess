@@ -31,15 +31,15 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     //U (add players, make move)
-    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException {
+    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws AlreadyTakenException, BadRequestException {
         GameData replace = getGame(gameID);
 
         if (replace == null) {
-            throw new DataAccessException("Error: bad request");
+            throw new BadRequestException("Error: bad request");
         }
         if ((color == ChessGame.TeamColor.BLACK && !replace.blackUsername().isBlank()) ||
                 (color == ChessGame.TeamColor.WHITE && !replace.whiteUsername().isBlank())) {
-            throw new DataAccessException("Error: color already taken");
+            throw new AlreadyTakenException("Error: already taken");
         }
 
         GameData game;

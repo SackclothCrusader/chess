@@ -14,7 +14,7 @@ public interface GameDAO {
     abstract Collection<GameData> listGames();
 
     //U (add players, make move)
-    abstract GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException;
+    abstract GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws AlreadyTakenException, BadRequestException;
 
     //D (delete when done?, remove player?)
 }

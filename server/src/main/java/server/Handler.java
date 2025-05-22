@@ -109,11 +109,26 @@ public class Handler {
                 res.status(401);
                 return gson.toJson(new UnauthorizedException("Error: unauthorized"));
             }
-            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor").getAsString());
+            String tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor").getAsString();
+            if (!(tmp.equals("WHITE") || tmp.equals("BLACK"))) {
+                res.status(400);
+                return gson.toJson(new BadRequestException("Error: bad request"));
+            }
+
+            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(tmp);
             Request.JoinGameRequest joinGameRequest = new Request.JoinGameRequest(authToken, color,
                     JsonParser.parseString(req.body()).getAsJsonObject().get("gameID").getAsInt());
 
-            Result.JoinGameResult joinGameResult = new GameService().joinGame(joinGameRequest);
+            Result.JoinGameResult joinGameResult;
+            try {
+                joinGameResult = new GameService().joinGame(joinGameRequest);
+            } catch (BadRequestException e) {
+                res.status(400);
+                return gson.toJson(e);
+            } catch (AlreadyTakenException e) {
+                res.status(403);
+                return gson.toJson(e);
+            }
 
             return new Gson().toJson(joinGameResult);
         }
