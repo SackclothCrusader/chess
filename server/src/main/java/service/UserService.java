@@ -22,6 +22,26 @@ public class UserService {
     }
 
     //Login
+    public Result.LoginResult login(Request.LoginRequest request) throws UnauthorizedException, BadRequestException  {
+        UserData user = MemoryUserDAO.getUser(request.username());
+        if (user == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+        if (!request.password().equals(user.password())) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        AuthData authData = new MemoryAuthDAO().createAuthData(user);
+        return new Result.LoginResult(authData.username(), authData.authToken());
+    }
 
     //Logout
+    public Result.LogoutResult logout(Request.LogoutRequest request) throws DataAccessException{
+        AuthData authData = new MemoryAuthDAO().getAuthData(request.authToken());
+        try {
+            new MemoryAuthDAO().deleteAuthData(authData);
+        } catch (DataAccessException e) {
+            throw e;
+        }
+        return new Result.LogoutResult();
+    }
 }

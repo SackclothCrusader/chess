@@ -23,6 +23,15 @@ public class MemoryAuthDAO implements AuthDAO {
         return null;
     }
 
+    public AuthData getAuthData(String authToken) {
+        for (AuthData i : authDatabase) {
+            if (authToken.equals(i.authToken())) {
+                return i;
+            }
+        }
+        return null;
+    }
+
     //D (delete authToken)
     public void deleteAuthData(AuthData authentication) throws DataAccessException {
         if(!authDatabase.remove(authentication)) {

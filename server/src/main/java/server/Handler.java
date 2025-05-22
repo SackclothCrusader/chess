@@ -1,19 +1,16 @@
 package server;
 
 import com.google.gson.*;
-import dataaccess.AlreadyTakenException;
-import dataaccess.BadRequestException;
-import server.Request;
-import server.Result;
+import dataaccess.*;
+import service.AuthService;
 import service.ClearService;
 import service.UserService;
 
 public class Handler {
     //authorization
-    public boolean authorization(String authToken){
-        return false;
+    private static boolean authenticate(String authToken){
+        return AuthService.authenticate(authToken);
     }
-
 
     public static class UserHandler extends Handler {
         //register [POST] /user
@@ -24,21 +21,51 @@ public class Handler {
                 registerResult = new UserService().register(registerRequest);
             } catch (AlreadyTakenException e) {
                 res.status(403);
-                var gson = new Gson().toJson(e);
-                return gson;
+                return new Gson().toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
-                var gson = new Gson().toJson(e);
-                return gson;
+                return new Gson().toJson(e);
             }
 
-            var gson = new Gson().toJson(registerResult);
-            return gson;
+            return new Gson().toJson(registerResult);
         }
 
         //login [POST] /session
+        public static Object login(spark.Request req, spark.Response res) {
+            Request.LoginRequest loginRequest = new Gson().fromJson(req.body(), Request.LoginRequest.class);
+            Result.LoginResult loginResult;
+            try {
+                loginResult = new UserService().login(loginRequest);
+            } catch (UnauthorizedException e) {
+                res.status(401);
+                return new Gson().toJson(e);
+            } catch (BadRequestException e) {
+                res.status(400);
+                return new Gson().toJson(e);
+            }
+
+            return new Gson().toJson(loginResult);
+        }
 
         //logout [DELETE] /session
+        public static Object logout(spark.Request req, spark.Response res) {
+            String authToken = req.headers("authorization");
+
+            if (!authenticate(authToken)) {
+                res.status(401);
+                return new Gson().toJson(new UnauthorizedException("Error: unauthorized"));
+            }
+            Request.LogoutRequest logoutRequest = new Request.LogoutRequest(authToken);
+            Result.LogoutResult logoutResult;
+            try {
+               logoutResult = new UserService().logout(logoutRequest);
+            } catch (DataAccessException e) {
+                res.status(500);
+                return new Gson().toJson(e);
+            }
+
+            return new Gson().toJson(logoutResult);
+        }
     }
 
     public static class GameHandler extends Handler {
@@ -56,8 +83,7 @@ public class Handler {
             Result.DeleteResult deleteResult = new ClearService().clear(deleteRequest);
             res.type("application/json");
             //turn deleteResult to JSON
-            var gson = new Gson().toJson(deleteResult);
-            return gson;
+            return new Gson().toJson(deleteResult);
         }
     }
 }
