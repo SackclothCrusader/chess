@@ -8,13 +8,7 @@ public class MemoryUserDAO implements UserDAO {
     static HashSet<UserData> users = new HashSet<>();
 
     //C (make user)
-    public UserData createUser(String username, String password, String email) throws DataAccessException{
-        for (UserData i : users) {
-            if (i.username().equals(username) || i.email().equals(email)) {
-                throw new DataAccessException("Error: already taken");
-            }
-        }
-
+    public UserData createUser(String username, String password, String email){
         UserData user = new UserData(username, password, email);
         users.add(user);
         return user;
