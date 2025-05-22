@@ -6,11 +6,13 @@ import model.UserData;
 import java.util.HashSet;
 
 public class MemoryAuthDAO implements AuthDAO {
-    public static HashSet<AuthData> authDatabase = new HashSet<>();
+    static HashSet<AuthData> authDatabase = new HashSet<>();
 
     //C (make authToken)
     public AuthData createAuthData(UserData user) {
-        return new AuthData(user.username(), generateToken());
+        AuthData tmp = new AuthData(user.username(), generateToken());
+        authDatabase.add(tmp);
+        return tmp;
     }
 
     //R (get authToken)

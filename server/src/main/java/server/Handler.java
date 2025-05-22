@@ -5,8 +5,11 @@ import dataaccess.*;
 import service.AuthService;
 import service.ClearService;
 import service.UserService;
+import java.lang.reflect.Type;
 
 public class Handler {
+    static final Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(Exception.class, new ExceptionTypeAdapter()).create();
+
     //authorization
     private static boolean authenticate(String authToken){
         return AuthService.authenticate(authToken);
@@ -21,12 +24,13 @@ public class Handler {
                 registerResult = new UserService().register(registerRequest);
             } catch (AlreadyTakenException e) {
                 res.status(403);
-                return new Gson().toJson(e);
+                return gson.toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
-                return new Gson().toJson(e);
+                return gson.toJson(e);
             }
-
+            System.out.println(registerResult);
+            System.out.println(new Gson().toJson(registerResult));
             return new Gson().toJson(registerResult);
         }
 
@@ -38,10 +42,10 @@ public class Handler {
                 loginResult = new UserService().login(loginRequest);
             } catch (UnauthorizedException e) {
                 res.status(401);
-                return new Gson().toJson(e);
+                return gson.toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
-                return new Gson().toJson(e);
+                return gson.toJson(e);
             }
 
             return new Gson().toJson(loginResult);
@@ -53,7 +57,7 @@ public class Handler {
 
             if (!authenticate(authToken)) {
                 res.status(401);
-                return new Gson().toJson(new UnauthorizedException("Error: unauthorized"));
+                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
             }
             Request.LogoutRequest logoutRequest = new Request.LogoutRequest(authToken);
             Result.LogoutResult logoutResult;
@@ -61,7 +65,7 @@ public class Handler {
                logoutResult = new UserService().logout(logoutRequest);
             } catch (DataAccessException e) {
                 res.status(500);
-                return new Gson().toJson(e);
+                return gson.toJson(e);
             }
 
             return new Gson().toJson(logoutResult);
@@ -84,6 +88,15 @@ public class Handler {
             res.type("application/json");
             //turn deleteResult to JSON
             return new Gson().toJson(deleteResult);
+        }
+    }
+
+    private static class ExceptionTypeAdapter implements JsonSerializer<Exception> {
+        @Override
+        public JsonElement serialize(Exception e, Type typeOfSrc, JsonSerializationContext context) {
+            JsonObject obj = new JsonObject();
+            obj.addProperty("message", e.getMessage());
+            return obj;
         }
     }
 }
