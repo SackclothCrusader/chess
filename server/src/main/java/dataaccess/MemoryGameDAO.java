@@ -26,7 +26,7 @@ public class MemoryGameDAO implements GameDAO {
         return null;
     }
 
-    public Collection<GameData> listGames() {
+    public HashSet<GameData> listGames() {
         return games;
     }
 

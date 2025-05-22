@@ -4,6 +4,7 @@ import com.google.gson.*;
 import dataaccess.*;
 import service.AuthService;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import java.lang.reflect.Type;
 
@@ -29,8 +30,6 @@ public class Handler {
                 res.status(400);
                 return gson.toJson(e);
             }
-            System.out.println(registerResult);
-            System.out.println(new Gson().toJson(registerResult));
             return new Gson().toJson(registerResult);
         }
 
@@ -74,6 +73,18 @@ public class Handler {
 
     public static class GameHandler extends Handler {
         //list games [GET] /game
+        public static Object listGames(spark.Request req, spark.Response res) {
+            String authToken = req.headers("authorization");
+            if (!authenticate(authToken)) {
+                res.status(401);
+                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+            }
+
+            Request.ListGamesRequest listGamesRequest = new Request.ListGamesRequest(authToken);
+            Result.ListGamesResult listGamesResult = new GameService().listGames(listGamesRequest);
+
+            return new Gson().toJson(listGamesResult);
+        }
 
         //create game [POST] /game
 
