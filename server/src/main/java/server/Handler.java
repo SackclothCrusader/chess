@@ -1,13 +1,18 @@
 package server;
 
+import com.google.gson.*;
+import server.Request;
+import server.Result;
+import service.ClearService;
+
 public class Handler {
     //authorization
-    private boolean authorization(String authToken){
+    public boolean authorization(String authToken){
         return false;
     }
 
 
-    private class UserHandler extends Handler {
+    public static class UserHandler extends Handler {
         //register [POST] /user
 
         //login [POST] /session
@@ -15,7 +20,7 @@ public class Handler {
         //logout [DELETE] /session
     }
 
-    private class GameHandler extends Handler {
+    public static class GameHandler extends Handler {
         //list games [GET] /game
 
         //create game [POST] /game
@@ -23,7 +28,15 @@ public class Handler {
         //join game [PUT] /game
     }
 
-    private class ClearHandler extends Handler {
+    public static class ClearHandler extends Handler {
         //clear [DELETE] /db
+        public static Object clear(spark.Request req, spark.Response res) {
+            Request.DeleteRequest deleteRequest = new Request.DeleteRequest();
+            Result.DeleteResult deleteResult = new ClearService().clear(deleteRequest);
+            res.type("application/json");
+            //turn deleteResult to JSON
+            var gson = new Gson().toJson(deleteRequest);
+            return gson;
+        }
     }
 }
