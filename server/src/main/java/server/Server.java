@@ -14,7 +14,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         //clear
-        Spark.delete("/db", (req, res) -> HandlerClearHandler.clear(req, res));
+        Spark.delete("/db", (req, res) -> Handler.ClearHandler.clear(req, res));
 
         //Register
         Spark.post("/user", (req, res) -> Handler.UserHandler.register(req, res));
@@ -29,9 +29,10 @@ public class Server {
         Spark.get("/game", (req, res) -> Handler.GameHandler.listGames(req, res));
 
         //Create Game
-        Spark.post("/Game", (req, res) -> Handler.GameHandler.createGame(req, res));
+        Spark.post("/game", (req, res) -> Handler.GameHandler.createGame(req, res));
 
-        //Join Game
+        //Join
+        Spark.put("/game", (req, res) -> Handler.GameHandler.joinGame(req, res));
 
 
 

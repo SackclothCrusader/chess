@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.*;
 import dataaccess.*;
 import service.AuthService;
@@ -87,8 +88,35 @@ public class Handler {
         }
 
         //create game [POST] /game
+        public static Object createGame(spark.Request req, spark.Response res) {
+            String authToken = req.headers("authorization");
+            if (!authenticate(authToken)) {
+                res.status(401);
+                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+            }
+
+            Request.CreateGameRequest createGameRequest = new Request.CreateGameRequest(authToken, JsonParser.parseString(req.body()).getAsJsonObject().get("gameName").getAsString());
+
+            Result.CreateGameResult createGameResult = new GameService().createGame(createGameRequest);
+
+            return new Gson().toJson(createGameResult);
+        }
 
         //join game [PUT] /game
+        public static Object joinGame(spark.Request req, spark.Response res) {
+            String authToken = req.headers("authorization");
+            if (!authenticate(authToken)) {
+                res.status(401);
+                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+            }
+            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor").getAsString());
+            Request.JoinGameRequest joinGameRequest = new Request.JoinGameRequest(authToken, color,
+                    JsonParser.parseString(req.body()).getAsJsonObject().get("gameID").getAsInt());
+
+            Result.JoinGameResult joinGameResult = new GameService().joinGame(joinGameRequest);
+
+            return new Gson().toJson(joinGameResult);
+        }
     }
 
     public static class ClearHandler extends Handler {
