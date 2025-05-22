@@ -19,14 +19,21 @@ public class Handler {
         //register [POST] /user
         public static Object register(spark.Request req, spark.Response res) {
             Request.RegisterRequest registerRequest = new Gson().fromJson(req.body(), Request.RegisterRequest.class);
+            Result.RegisterResult registerResult;
             try {
-                Result.RegisterResult registerResult = new UserService().register(registerRequest);
+                registerResult = new UserService().register(registerRequest);
             } catch (AlreadyTakenException e) {
-//                throw new RuntimeException(e);
+                res.status(403);
+                var gson = new Gson().toJson(e);
+                return gson;
             } catch (BadRequestException e) {
-//                throw new RuntimeException(e);
+                res.status(400);
+                var gson = new Gson().toJson(e);
+                return gson;
             }
-            return null;
+
+            var gson = new Gson().toJson(registerResult);
+            return gson;
         }
 
         //login [POST] /session

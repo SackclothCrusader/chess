@@ -1,11 +1,10 @@
 package service;
 
 import dataaccess.*;
+import model.AuthData;
+import model.UserData;
 import server.Request;
 import server.Result;
-
-import javax.xml.crypto.Data;
-import java.util.List;
 
 public class UserService {
     //Register
@@ -17,8 +16,9 @@ public class UserService {
             throw new AlreadyTakenException("Error: already taken");
         }
         new MemoryUserDAO().createUser(request.username(), request.password(), request.email());
-
-        return null;
+        UserData user = new MemoryUserDAO().getUser(request.username());
+        AuthData authData = new MemoryAuthDAO().createAuthData(user);
+        return new Result.RegisterResult(authData.username(), authData.authToken());
     }
 
     //Login

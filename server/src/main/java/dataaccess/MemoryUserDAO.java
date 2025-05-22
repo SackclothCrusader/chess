@@ -15,7 +15,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     //R (find user)
-    public UserData getUser(String username) {
+    public static UserData getUser(String username) {
         for (UserData i : users) {
             if (i.username().equals(username)) {
                 return i;

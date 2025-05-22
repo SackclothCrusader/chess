@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface AuthDAO {
     //C (make authToken)
-    abstract AuthData makeAuthData(UserData user);
+    abstract AuthData createAuthData(UserData user);
 
     //R (get authToken)
     abstract AuthData getAuthData(UserData user);

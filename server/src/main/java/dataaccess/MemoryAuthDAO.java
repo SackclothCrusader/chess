@@ -9,7 +9,7 @@ public class MemoryAuthDAO implements AuthDAO {
     public static HashSet<AuthData> authDatabase = new HashSet<>();
 
     //C (make authToken)
-    public AuthData makeAuthData(UserData user) {
+    public AuthData createAuthData(UserData user) {
         return new AuthData(user.username(), generateToken());
     }
 
