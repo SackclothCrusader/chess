@@ -11,7 +11,7 @@ public class MemoryGameDAO implements GameDAO {
 
     //C (make game)
     public GameData createGame(String name) {
-        GameData game = new GameData(games.size()+1, name, "", "", new ChessGame());
+        GameData game = new GameData(games.size()+1, name, null, null, new ChessGame());
         games.add(game);
         return game;
     }
@@ -31,16 +31,8 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     //U (add players, make move)
-    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws AlreadyTakenException, BadRequestException {
+    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) {
         GameData replace = getGame(gameID);
-
-        if (replace == null) {
-            throw new BadRequestException("Error: bad request");
-        }
-        if ((color == ChessGame.TeamColor.BLACK && !replace.blackUsername().isBlank()) ||
-                (color == ChessGame.TeamColor.WHITE && !replace.whiteUsername().isBlank())) {
-            throw new AlreadyTakenException("Error: already taken");
-        }
 
         GameData game;
         if (color == ChessGame.TeamColor.WHITE) {

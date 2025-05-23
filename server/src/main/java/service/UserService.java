@@ -9,7 +9,8 @@ import server.Result;
 public class UserService {
     //Register
     public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException  {
-        if (request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
+        if (request == null || request.username() == null || request.username() == null || request.password() == null
+                || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
             throw new BadRequestException("Error: bad request");
         }
         if (new MemoryUserDAO().getUser(request.username()) != null) {
@@ -23,11 +24,12 @@ public class UserService {
 
     //Login
     public Result.LoginResult login(Request.LoginRequest request) throws UnauthorizedException, BadRequestException  {
-        UserData user = MemoryUserDAO.getUser(request.username());
-        if (user == null) {
+        if (request == null || request.username() == null || request.password() == null
+                || request.password().isBlank() || request.username().isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        if (!request.password().equals(user.password())) {
+        UserData user = MemoryUserDAO.getUser(request.username());
+        if (user == null || !request.password().equals(user.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         AuthData authData = new MemoryAuthDAO().createAuthData(user);

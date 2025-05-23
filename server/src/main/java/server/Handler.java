@@ -94,10 +94,21 @@ public class Handler {
                 res.status(401);
                 return gson.toJson(new UnauthorizedException("Error: unauthorized"));
             }
+            var name = JsonParser.parseString(req.body()).getAsJsonObject().get("gameName");
+            if (name == null) {
+                res.status(400);
+                return gson.toJson(new BadRequestException("Error: bad request"));
+            }
 
-            Request.CreateGameRequest createGameRequest = new Request.CreateGameRequest(authToken, JsonParser.parseString(req.body()).getAsJsonObject().get("gameName").getAsString());
+            Request.CreateGameRequest createGameRequest = new Request.CreateGameRequest(authToken, name.getAsString());
 
-            Result.CreateGameResult createGameResult = new GameService().createGame(createGameRequest);
+            Result.CreateGameResult createGameResult;
+            try {
+                createGameResult  = new GameService().createGame(createGameRequest);
+            } catch (BadRequestException e) {
+                res.status(400);
+                return gson.toJson(e);
+            }
 
             return new Gson().toJson(createGameResult);
         }
@@ -109,16 +120,26 @@ public class Handler {
                 res.status(401);
                 return gson.toJson(new UnauthorizedException("Error: unauthorized"));
             }
-            String tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor").getAsString();
-            if (!(tmp.equals("WHITE") || tmp.equals("BLACK"))) {
+
+            var tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor");
+            if (tmp == null) {
+                res.status(400);
+                return gson.toJson(new BadRequestException("Error: bad request"));
+            }
+            String colorCheck = tmp.getAsString();
+            if (!(colorCheck.equals("WHITE") || colorCheck.equals("BLACK"))) {
                 res.status(400);
                 return gson.toJson(new BadRequestException("Error: bad request"));
             }
 
-            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(tmp);
-            Request.JoinGameRequest joinGameRequest = new Request.JoinGameRequest(authToken, color,
-                    JsonParser.parseString(req.body()).getAsJsonObject().get("gameID").getAsInt());
+            ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(colorCheck);
+            var gameID = JsonParser.parseString(req.body()).getAsJsonObject().get("gameID");
+            if (gameID == null) {
+                res.status(400);
+                return gson.toJson(new BadRequestException("Error: bad request"));
+            }
 
+            Request.JoinGameRequest joinGameRequest = new Request.JoinGameRequest(authToken, color, gameID.getAsInt());
             Result.JoinGameResult joinGameResult;
             try {
                 joinGameResult = new GameService().joinGame(joinGameRequest);
