@@ -6,7 +6,7 @@ public interface MoveCalc {
     abstract ArrayList<ChessMove> moveCalc(ChessBoard board, ChessPosition start);
 
     // return true if the square is passable
-    default boolean AddValidMove(ChessBoard board, ChessPosition start, ChessPosition end, ArrayList<ChessMove> moves) {
+    default boolean addValidMove(ChessBoard board, ChessPosition start, ChessPosition end, ArrayList<ChessMove> moves) {
         //ensure existence of base piece
         ChessPiece startPiece = board.getPiece(start);
         if (startPiece == null) {
@@ -43,27 +43,27 @@ public interface MoveCalc {
         //top
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()+i, start.getColumn());
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }
         //right
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow(), start.getColumn()+i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }
         //bot
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()-i, start.getColumn());
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }        }
         //left
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow(), start.getColumn()-i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }
@@ -78,27 +78,27 @@ public interface MoveCalc {
         //topleft
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()+i, start.getColumn()-i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }
         //topright
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()+i, start.getColumn()+i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }
         //botleft
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()-i, start.getColumn()-i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }        }
         //botright
         for(int i = 1; i < 8; i++) {
             end = new ChessPosition(start.getRow()-i, start.getColumn()+i);
-            if (!AddValidMove(board, start, end, moves)) {
+            if (!addValidMove(board, start, end, moves)) {
                 break;
             }
         }

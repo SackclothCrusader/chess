@@ -1,6 +1,5 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PawnMoveCalc implements MoveCalc{
@@ -32,7 +31,7 @@ public class PawnMoveCalc implements MoveCalc{
         }
     }
 
-    private void AddCaptureMoves(ChessBoard board, ChessPosition start, ArrayList<ChessMove> moves){
+    private void addCaptureMoves(ChessBoard board, ChessPosition start, ArrayList<ChessMove> moves){
         ChessPiece pawn = board.getPiece(start);
         ChessPiece enemy;
         ChessPosition end;
@@ -44,7 +43,7 @@ public class PawnMoveCalc implements MoveCalc{
             if (LEFT_EDGE <= end.getColumn()) {
                 enemy = board.getPiece(end);
                 if (enemy != null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
             //right
@@ -52,7 +51,7 @@ public class PawnMoveCalc implements MoveCalc{
             if (RIGHT_EDGE >= end.getColumn()) {
                 enemy = board.getPiece(end);
                 if (enemy != null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
         }
@@ -62,7 +61,7 @@ public class PawnMoveCalc implements MoveCalc{
             if (LEFT_EDGE <= end.getColumn()) {
                 enemy = board.getPiece(end);
                 if (enemy != null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
             //right
@@ -70,7 +69,7 @@ public class PawnMoveCalc implements MoveCalc{
             if (RIGHT_EDGE >= end.getColumn()) {
                 enemy = board.getPiece(end);
                 if (enemy != null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
         }
@@ -85,25 +84,25 @@ public class PawnMoveCalc implements MoveCalc{
         //white
         if (pawn.getTeamColor() == ChessGame.TeamColor.WHITE) {
             end = new ChessPosition(start.getRow()+1, start.getColumn());
-            if (board.getPiece(end) == null && AddValidMove(board, start, end, moves) && start.getRow() == WHITE_START_ROW) {
+            if (board.getPiece(end) == null && addValidMove(board, start, end, moves) && start.getRow() == WHITE_START_ROW) {
                 end = new ChessPosition(start.getRow() + 2, start.getColumn());
                 if (board.getPiece(end) == null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
         }
         //black
         else {
             end = new ChessPosition(start.getRow()-1, start.getColumn());
-            if (board.getPiece(end) == null && AddValidMove(board, start, end, moves) && start.getRow() == BLACK_START_ROW) {
+            if (board.getPiece(end) == null && addValidMove(board, start, end, moves) && start.getRow() == BLACK_START_ROW) {
                 end = new ChessPosition(start.getRow() - 2, start.getColumn());
                 if (board.getPiece(end) == null) {
-                    AddValidMove(board, start, end, moves);
+                    addValidMove(board, start, end, moves);
                 }
             }
         }
 
-        AddCaptureMoves(board, start, moves);
+        addCaptureMoves(board, start, moves);
         promote(moves);
         return moves;
     }
