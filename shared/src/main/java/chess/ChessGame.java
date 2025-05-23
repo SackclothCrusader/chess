@@ -156,7 +156,9 @@ public class ChessGame {
             for (int j = 1; j <= 8; j++) {
                 ChessPosition pos = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(pos);
-                if (checker(opponent, kingPos, pos, piece, board) == 1) return true;
+                if (checker(opponent, kingPos, pos, piece, board) == 1) {
+                    return true;
+                }
             }
         }
         return false;
