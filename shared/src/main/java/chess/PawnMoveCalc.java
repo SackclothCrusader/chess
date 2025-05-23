@@ -4,12 +4,12 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PawnMoveCalc implements MoveCalc{
-    private final int WHITE_START_ROW = 2;
-    private final int BLACK_START_ROW = 7;
-    private final int WHITE_PROMOTE = 8;
-    private final int BLACK_PROMOTE = 1;
-    private final int LEFT_EDGE = 1;
-    private final int RIGHT_EDGE = 8;
+    private final static int WHITE_START_ROW = 2;
+    private final static int BLACK_START_ROW = 7;
+    private final static int WHITE_PROMOTE = 8;
+    private final static int BLACK_PROMOTE = 1;
+    private final static int LEFT_EDGE = 1;
+    private final static int RIGHT_EDGE = 8;
 
     private void promote(ArrayList<ChessMove> moves){
         //based on the logic pawns will not be able to move backwards
