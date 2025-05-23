@@ -26,7 +26,10 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return teamToPlay == chessGame.teamToPlay && Objects.equals(gameBoard, chessGame.gameBoard) && Objects.equals(moveHistory, chessGame.moveHistory) && Objects.equals(whiteKing, chessGame.whiteKing) && Objects.equals(blackKing, chessGame.blackKing) && Objects.equals(whiteValid, chessGame.whiteValid) && Objects.equals(blackValid, chessGame.blackValid);
+        return teamToPlay == chessGame.teamToPlay && Objects.equals(gameBoard, chessGame.gameBoard)
+                && Objects.equals(moveHistory, chessGame.moveHistory) && Objects.equals(whiteKing, chessGame.whiteKing)
+                && Objects.equals(blackKing, chessGame.blackKing) && Objects.equals(whiteValid, chessGame.whiteValid)
+                && Objects.equals(blackValid, chessGame.blackValid);
     }
 
     @Override

@@ -51,12 +51,14 @@ public class ChessBoard {
         ChessPosition end = move.getEndPosition();
         //base case
         if (move.getPromotionPiece() == null) {
-            board[end.getRow()-BOARD_OFFSET][end.getColumn()-BOARD_OFFSET] = board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET];
+            board[end.getRow()-BOARD_OFFSET][end.getColumn()-BOARD_OFFSET] =
+                    board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET];
             board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET] = null;
             return;
         }
         //promotion
-        board[end.getRow()-BOARD_OFFSET][end.getColumn()-BOARD_OFFSET] = new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
+        board[end.getRow()-BOARD_OFFSET][end.getColumn()-BOARD_OFFSET] =
+                new ChessPiece(getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece());
         board[start.getRow()-BOARD_OFFSET][start.getColumn()-BOARD_OFFSET] = null;
     }
 

@@ -10,7 +10,7 @@ import service.UserService;
 import java.lang.reflect.Type;
 
 public class Handler {
-    static final Gson gson = new GsonBuilder().registerTypeHierarchyAdapter(Exception.class, new ExceptionTypeAdapter()).create();
+    static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(Exception.class, new ExceptionTypeAdapter()).create();
 
     //authorization
     private static boolean authenticate(String authToken){
@@ -26,10 +26,10 @@ public class Handler {
                 registerResult = new UserService().register(registerRequest);
             } catch (AlreadyTakenException e) {
                 res.status(403);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             }
             return new Gson().toJson(registerResult);
         }
@@ -42,10 +42,10 @@ public class Handler {
                 loginResult = new UserService().login(loginRequest);
             } catch (UnauthorizedException e) {
                 res.status(401);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(loginResult);
@@ -57,7 +57,7 @@ public class Handler {
 
             if (!authenticate(authToken)) {
                 res.status(401);
-                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+                return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
             Request.LogoutRequest logoutRequest = new Request.LogoutRequest(authToken);
             Result.LogoutResult logoutResult;
@@ -65,7 +65,7 @@ public class Handler {
                logoutResult = new UserService().logout(logoutRequest);
             } catch (DataAccessException e) {
                 res.status(500);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(logoutResult);
@@ -78,7 +78,7 @@ public class Handler {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
                 res.status(401);
-                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+                return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
 
             Request.ListGamesRequest listGamesRequest = new Request.ListGamesRequest(authToken);
@@ -92,12 +92,12 @@ public class Handler {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
                 res.status(401);
-                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+                return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
             var name = JsonParser.parseString(req.body()).getAsJsonObject().get("gameName");
             if (name == null) {
                 res.status(400);
-                return gson.toJson(new BadRequestException("Error: bad request"));
+                return GSON.toJson(new BadRequestException("Error: bad request"));
             }
 
             Request.CreateGameRequest createGameRequest = new Request.CreateGameRequest(authToken, name.getAsString());
@@ -107,7 +107,7 @@ public class Handler {
                 createGameResult  = new GameService().createGame(createGameRequest);
             } catch (BadRequestException e) {
                 res.status(400);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(createGameResult);
@@ -118,25 +118,25 @@ public class Handler {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
                 res.status(401);
-                return gson.toJson(new UnauthorizedException("Error: unauthorized"));
+                return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
 
             var tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor");
             if (tmp == null) {
                 res.status(400);
-                return gson.toJson(new BadRequestException("Error: bad request"));
+                return GSON.toJson(new BadRequestException("Error: bad request"));
             }
             String colorCheck = tmp.getAsString();
             if (!(colorCheck.equals("WHITE") || colorCheck.equals("BLACK"))) {
                 res.status(400);
-                return gson.toJson(new BadRequestException("Error: bad request"));
+                return GSON.toJson(new BadRequestException("Error: bad request"));
             }
 
             ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(colorCheck);
             var gameID = JsonParser.parseString(req.body()).getAsJsonObject().get("gameID");
             if (gameID == null) {
                 res.status(400);
-                return gson.toJson(new BadRequestException("Error: bad request"));
+                return GSON.toJson(new BadRequestException("Error: bad request"));
             }
 
             Request.JoinGameRequest joinGameRequest = new Request.JoinGameRequest(authToken, color, gameID.getAsInt());
@@ -145,10 +145,10 @@ public class Handler {
                 joinGameResult = new GameService().joinGame(joinGameRequest);
             } catch (BadRequestException e) {
                 res.status(400);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             } catch (AlreadyTakenException e) {
                 res.status(403);
-                return gson.toJson(e);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(joinGameResult);
