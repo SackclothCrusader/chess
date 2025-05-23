@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] board;
-    private final int BOARD_OFFSET = 1;
+    private final static int BOARD_OFFSET = 1;
 
     @Override
     public String toString() {
