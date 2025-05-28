@@ -9,4 +9,8 @@ public class DataAccessException extends Exception{
         super(message);
         this.message = message;
     }
+
+    public DataAccessException(String message, Throwable ex) {
+        super(message, ex);
+    }
 }
