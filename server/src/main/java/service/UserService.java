@@ -7,18 +7,21 @@ import server.Request;
 import server.Result;
 
 public class UserService {
+    private final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+
     //Register
     public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException  {
-        if (request == null || request.username() == null || request.username() == null || request.password() == null
+        if (request == null || request.username() == null || request.password() == null
                 || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
             throw new BadRequestException("Error: bad request");
         }
-        if (new MemoryUserDAO().getUser(request.username()) != null) {
+        if (userDAO.getUser(request.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        new MemoryUserDAO().createUser(request.username(), request.password(), request.email());
-        UserData user = new MemoryUserDAO().getUser(request.username());
-        AuthData authData = new MemoryAuthDAO().createAuthData(user);
+        userDAO.createUser(request.username(), request.password(), request.email());
+        UserData user = userDAO.getUser(request.username());
+        AuthData authData = authDAO.createAuthData(user);
         return new Result.RegisterResult(authData.username(), authData.authToken());
     }
 
@@ -28,19 +31,19 @@ public class UserService {
                 || request.password().isBlank() || request.username().isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        UserData user = MemoryUserDAO.getUser(request.username());
+        UserData user = userDAO.getUser(request.username());
         if (user == null || !request.password().equals(user.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        AuthData authData = new MemoryAuthDAO().createAuthData(user);
+        AuthData authData = authDAO.createAuthData(user);
         return new Result.LoginResult(authData.username(), authData.authToken());
     }
 
     //Logout
     public Result.LogoutResult logout(Request.LogoutRequest request) throws DataAccessException{
-        AuthData authData = new MemoryAuthDAO().getAuthData(request.authToken());
+        AuthData authData = authDAO.getAuthData(request.authToken());
         try {
-            new MemoryAuthDAO().deleteAuthData(authData);
+            authDAO.deleteAuthData(authData);
         } catch (DataAccessException e) {
             throw e;
         }

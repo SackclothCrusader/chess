@@ -8,9 +8,12 @@ import server.Request;
 import server.Result;
 
 public class GameService {
+    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
+    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+
     //list games
     public Result.ListGamesResult listGames(Request.ListGamesRequest request) {
-        return new Result.ListGamesResult(new MemoryGameDAO().listGames());
+        return new Result.ListGamesResult(gameDAO.listGames());
     }
 
     //create game
@@ -18,7 +21,7 @@ public class GameService {
         if (request == null || request.authToken() == null || request.gameName() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        GameData game = new MemoryGameDAO().createGame(request.gameName());
+        GameData game = gameDAO.createGame(request.gameName());
         return new Result.CreateGameResult(game.gameID());
     }
 
@@ -27,8 +30,8 @@ public class GameService {
         if (request == null  || request.color() == null || request.authToken() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        GameData game = new MemoryGameDAO().getGame(request.gameID());
-        AuthData user = new MemoryAuthDAO().getAuthData(request.authToken());
+        GameData game = gameDAO.getGame(request.gameID());
+        AuthData user = authDAO.getAuthData(request.authToken());
         if (game == null || user == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -37,7 +40,7 @@ public class GameService {
             throw new AlreadyTakenException("Error: already taken");
         }
 
-        new MemoryGameDAO().addPlayer(user.username(), request.color(), request.gameID());
+        gameDAO.addPlayer(user.username(), request.color(), request.gameID());
         return new Result.JoinGameResult();
     }
 }

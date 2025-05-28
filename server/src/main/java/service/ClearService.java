@@ -6,7 +6,9 @@ import dataaccess.MemoryClearDAO;
 
 public class ClearService {
     public Result.DeleteResult clear(Request.DeleteRequest request) {
-        new MemoryClearDAO().clear();
+        var clearDAO = new MemoryClearDAO();
+
+        clearDAO.clear();
         return new Result.DeleteResult();
     }
 }
