@@ -24,12 +24,12 @@ public class MySqlUserDAO implements UserDAO {
         try {
             var conn = DatabaseManager.getConnection();
             var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setString(1, data.username());
-                preparedStatement.setString(2, data.password());
-                preparedStatement.setString(3, data.email());
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, data.username());
+                stmt.setString(2, data.password());
+                stmt.setString(3, data.email());
 
-                if (preparedStatement.executeUpdate() == 1) {
+                if (stmt.executeUpdate() == 1) {
                     return data;
                 } else {
                     return null;
@@ -45,10 +45,10 @@ public class MySqlUserDAO implements UserDAO {
             var conn = DatabaseManager.getConnection();
 
             var statement = "SELECT username, password, email FROM user WHERE username = ?";
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setString(1, username);
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, username);
 
-                try (var rs = preparedStatement.executeQuery()) {
+                try (var rs = stmt.executeQuery()) {
                     rs.next();
                     var user = rs.getString("username");
                     var password = rs.getString("password");

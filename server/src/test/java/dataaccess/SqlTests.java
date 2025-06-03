@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 
 public class SqlTests {
     private MySqlUserDAO userDAO = new MySqlUserDAO();
+    private MySqlClearDAO clearDAO = new MySqlClearDAO();
 
     @Test
-    public void exampleTest() {
+    public void clearTest() {
         try {
-            userDAO.example();
+            clearDAO.clear();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
