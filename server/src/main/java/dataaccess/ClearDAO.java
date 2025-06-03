@@ -2,5 +2,5 @@ package dataaccess;
 
 public interface ClearDAO {
     //D (delete all)
-//    abstract void clear();
+    abstract void clear() throws DataAccessException;
 }

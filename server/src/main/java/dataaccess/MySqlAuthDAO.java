@@ -4,7 +4,7 @@ import model.AuthData;
 import model.UserData;
 
 public class MySqlAuthDAO implements AuthDAO{
-    public AuthData createAuthData(UserData user) {
+    public AuthData createAuthData(UserData user) throws DataAccessException{
         AuthData data = new AuthData(user.username(), generateToken());
 
         try {
@@ -21,11 +21,11 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException("Internal Error", e);
         }
     }
 
-    public AuthData getAuthData(UserData user) {
+    public AuthData getAuthData(UserData user) throws DataAccessException{
         try {
             var conn = DatabaseManager.getConnection();
 
@@ -42,11 +42,11 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException("Internal Error", e);
         }
     }
 
-    public AuthData getAuthData(String authToken) {
+    public AuthData getAuthData(String authToken) throws DataAccessException{
         try {
             var conn = DatabaseManager.getConnection();
 
@@ -66,7 +66,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            return null;
+            throw new DataAccessException("Internal Error", e);
         }
     }
 

@@ -36,12 +36,7 @@ public class UserService {
                 || request.password().isBlank() || request.username().isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        UserData user;
-        try {
-            user = userDAO.getUser(request.username());
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        UserData user = userDAO.getUser(request.username());
         if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
