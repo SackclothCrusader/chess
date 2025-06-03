@@ -2,19 +2,17 @@ package dataaccess;
 
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import com.google.gson.*;
-import java.sql.*;
 
 public class MySqlUserDAO implements UserDAO {
-    public void example() throws Exception {
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
-                var rs = preparedStatement.executeQuery();
-                rs.next();
-                System.out.println(rs.getInt(1));
-            }
-        }
-    }
+//    public void example() throws Exception {
+//        try (var conn = DatabaseManager.getConnection()) {
+//            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
+//                var rs = preparedStatement.executeQuery();
+//                rs.next();
+//                System.out.println(rs.getInt(1));
+//            }
+//        }
+//    }
 
     public UserData createUser(String username, String email, String password) {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
@@ -51,8 +49,8 @@ public class MySqlUserDAO implements UserDAO {
                 try (var rs = stmt.executeQuery()) {
                     rs.next();
                     var user = rs.getString("username");
-                    var password = rs.getString("password");
                     var email = rs.getString("email");
+                    var password = rs.getString("password");
 
                     return new UserData(user, email, password);
                 }

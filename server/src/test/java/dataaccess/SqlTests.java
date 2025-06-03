@@ -1,11 +1,13 @@
 package dataaccess;
 
-import dataaccess.MySqlUserDAO;
+import model.*;
 import org.junit.jupiter.api.Test;
 
 public class SqlTests {
     private MySqlUserDAO userDAO = new MySqlUserDAO();
     private MySqlClearDAO clearDAO = new MySqlClearDAO();
+    private MySqlAuthDAO authDAO = new MySqlAuthDAO();
+    private MySqlGameDAO gameDAO = new MySqlGameDAO();
 
     @Test
     public void clearTest() {
@@ -26,38 +28,84 @@ public class SqlTests {
     }
 
     @Test
-    public void negativeRegisterTest() {
-
+    public void negativeAddUserTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        userDAO.createUser(null, "", "");
     }
 
     @Test
-    public void positiveLoginTest() {
-
+    public void positiveCreateAuthTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        UserData user = userDAO.createUser("user", "email", "password");
+        authDAO.createAuthData(user);
     }
 
     @Test
-    public void negativeLoginTest() {
-
+    public void negativeCreateAuthTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        UserData user = new UserData("I", "DONT", "EXIST");
+        authDAO.createAuthData(user);
     }
 
     @Test
-    public void positiveLogoutTest() {
-
+    public void positiveGetAuthDataTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        clearDAO.clear();
+        UserData user = userDAO.createUser("user", "email", "password");
+        AuthData data = authDAO.createAuthData(user);
+        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
-    public void negativeLogoutTest() {
-
+    public void negativeGetAuthDataTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        UserData user = new UserData("user", "email", "password");
+        AuthData data = authDAO.createAuthData(user);
+        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
-    public void positiveCreateGameTest() {
-
+    public void positiveRemoveAuthTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        clearDAO.clear();
+        UserData user = userDAO.createUser("user", "email", "password");
+        AuthData data = authDAO.createAuthData(user);
+        System.out.println(authDAO.getAuthData(user));
+        authDAO.deleteAuthData(data);
+        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
-    public void negativeCreateGameTest() {
-
+    public void negativeRemoveAuthTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        clearDAO.clear();
+        UserData user = userDAO.createUser("user", "email", "password");
+        AuthData data = authDAO.createAuthData(user);
+        System.out.println(authDAO.getAuthData(user));
+        authDAO.deleteAuthData(data);
+        authDAO.deleteAuthData(data);
+        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test

@@ -2,35 +2,62 @@ package dataaccess;
 
 import model.AuthData;
 import model.UserData;
-import java.sql.*;
-import org.mindrot.jbcrypt.BCrypt;
 
 public class MySqlAuthDAO implements AuthDAO{
     public AuthData createAuthData(UserData user) {
-        return null;
+
+        AuthData data = new AuthData(user.username(), generateToken());
+
+        try {
+            var conn = DatabaseManager.getConnection();
+            var statement = "INSERT INTO auth (username, authToken) VALUES (?, ?)";
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, data.username());
+                stmt.setString(2, data.authToken());
+
+                if (stmt.executeUpdate() == 1) {
+                    return data;
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AuthData getAuthData(UserData user) {
-        return null;
+        try {
+            var conn = DatabaseManager.getConnection();
+
+            var statement = "SELECT username, authToken FROM auth WHERE username = ?";
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, user.username());
+
+                try (var rs = stmt.executeQuery()) {
+                    rs.next();
+                    var username = rs.getString("username");
+                    var authToken = rs.getString("authToken");
+
+                    return new AuthData(username, authToken);
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void deleteAuthData(AuthData data) {
+        try {
+            var conn = DatabaseManager.getConnection();
+            var statement = "DELETE FROM auth WHERE authToken = ?";
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, data.authToken());
 
+                stmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            return;
+        }
     }
-
-    private void storeUserPassword(String username, String clearTextPassword) {
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  authTokens (
-              `username` TEXT NOT NULL,
-              `email` TEXT NOT NULL,
-              `password` TEXT NOT NULL,
-              PRIMARY KEY (`username`),
-              INDEX(email)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
 }

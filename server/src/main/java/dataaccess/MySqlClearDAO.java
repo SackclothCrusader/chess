@@ -11,5 +11,10 @@ public class MySqlClearDAO implements ClearDAO{
         } catch (Exception e) {
             return;
         }
+        try {
+            DatabaseManager.configDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
