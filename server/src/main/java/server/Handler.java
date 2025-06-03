@@ -30,6 +30,9 @@ public class Handler {
             } catch (BadRequestException e) {
                 res.status(400);
                 return GSON.toJson(e);
+            } catch (DataAccessException e) {
+                res.status(500);
+                return GSON.toJson(e);
             }
             return new Gson().toJson(registerResult);
         }
@@ -41,10 +44,13 @@ public class Handler {
             try {
                 loginResult = new UserService().login(loginRequest);
             } catch (UnauthorizedException e) {
-                res.status(401);
+                res.status(500);
                 return GSON.toJson(e);
             } catch (BadRequestException e) {
                 res.status(400);
+                return GSON.toJson(e);
+            } catch (DataAccessException e) {
+                res.status(500);
                 return GSON.toJson(e);
             }
 
@@ -56,7 +62,7 @@ public class Handler {
             String authToken = req.headers("authorization");
 
             if (!authenticate(authToken)) {
-                res.status(401);
+                res.status(500);
                 return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
             Request.LogoutRequest logoutRequest = new Request.LogoutRequest(authToken);
@@ -77,7 +83,7 @@ public class Handler {
         public static Object listGames(spark.Request req, spark.Response res) {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
-                res.status(401);
+                res.status(500);
                 return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
 
@@ -91,7 +97,7 @@ public class Handler {
         public static Object createGame(spark.Request req, spark.Response res) {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
-                res.status(401);
+                res.status(500);
                 return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
             var name = JsonParser.parseString(req.body()).getAsJsonObject().get("gameName");
@@ -108,6 +114,9 @@ public class Handler {
             } catch (BadRequestException e) {
                 res.status(400);
                 return GSON.toJson(e);
+            } catch (DataAccessException e) {
+                res.status(500);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(createGameResult);
@@ -117,7 +126,7 @@ public class Handler {
         public static Object joinGame(spark.Request req, spark.Response res) {
             String authToken = req.headers("authorization");
             if (!authenticate(authToken)) {
-                res.status(401);
+                res.status(500);
                 return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
             }
 
@@ -149,6 +158,9 @@ public class Handler {
             } catch (AlreadyTakenException e) {
                 res.status(403);
                 return GSON.toJson(e);
+            } catch (DataAccessException e) {
+                res.status(500);
+                return GSON.toJson(e);
             }
 
             return new Gson().toJson(joinGameResult);
@@ -159,7 +171,13 @@ public class Handler {
         //clear [DELETE] /db
         public static Object clear(spark.Request req, spark.Response res) {
             Request.DeleteRequest deleteRequest = new Request.DeleteRequest();
-            Result.DeleteResult deleteResult = new ClearService().clear(deleteRequest);
+            Result.DeleteResult deleteResult;
+            try {
+                deleteResult = new ClearService().clear(deleteRequest);
+            } catch (DataAccessException e) {
+                res.status(500);
+                return GSON.toJson(e);
+            }
             res.type("application/json");
             //turn deleteResult to JSON
             return new Gson().toJson(deleteResult);

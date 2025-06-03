@@ -21,7 +21,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
@@ -55,11 +55,14 @@ public class MySqlAuthDAO implements AuthDAO{
                 stmt.setString(1, authToken);
 
                 try (var rs = stmt.executeQuery()) {
-                    rs.next();
-                    var username = rs.getString("username");
-                    var token = rs.getString("authToken");
+                    if (rs.next()) {
+                        var username = rs.getString("username");
+                        var token = rs.getString("authToken");
 
-                    return new AuthData(username, token);
+                        return new AuthData(username, token);
+                    } else {
+                        return null;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -67,7 +70,7 @@ public class MySqlAuthDAO implements AuthDAO{
         }
     }
 
-    public void deleteAuthData(AuthData data) {
+    public void deleteAuthData(AuthData data) throws DataAccessException{
         try {
             var conn = DatabaseManager.getConnection();
             var statement = "DELETE FROM auth WHERE authToken = ?";
@@ -77,7 +80,7 @@ public class MySqlAuthDAO implements AuthDAO{
                 stmt.executeUpdate();
             }
         } catch (Exception e) {
-            return;
+            throw new DataAccessException("Error: something went wrong", e);
         }
     }
 }

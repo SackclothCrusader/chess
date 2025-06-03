@@ -17,16 +17,21 @@ public class GameService {
     }
 
     //create game
-    public Result.CreateGameResult createGame(Request.CreateGameRequest request) throws BadRequestException {
+    public Result.CreateGameResult createGame(Request.CreateGameRequest request) throws BadRequestException, DataAccessException {
         if (request == null || request.authToken() == null || request.gameName() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        GameData game = gameDAO.createGame(request.gameName());
+        GameData game;
+        try {
+            game = gameDAO.createGame(request.gameName());
+        } catch (DataAccessException e) {
+            throw e;
+        }
         return new Result.CreateGameResult(game.gameID());
     }
 
     //join game
-    public Result.JoinGameResult joinGame(Request.JoinGameRequest request) throws AlreadyTakenException, BadRequestException {
+    public Result.JoinGameResult joinGame(Request.JoinGameRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException {
         if (request == null  || request.color() == null || request.authToken() == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -40,7 +45,11 @@ public class GameService {
             throw new AlreadyTakenException("Error: already taken");
         }
 
-        gameDAO.addPlayer(user.username(), request.color(), request.gameID());
+        try {
+            gameDAO.addPlayer(user.username(), request.color(), request.gameID());
+        } catch (DataAccessException e) {
+            throw e;
+        }
         return new Result.JoinGameResult();
     }
 }

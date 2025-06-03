@@ -1,7 +1,7 @@
 package dataaccess;
 
 public class MySqlClearDAO implements ClearDAO{
-    public void clear() {
+    public void clear() throws DataAccessException{
         try (var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.createStatement()) {
                 stmt.executeUpdate("DROP TABLE IF EXISTS auth");
@@ -9,12 +9,12 @@ public class MySqlClearDAO implements ClearDAO{
                 stmt.executeUpdate("DROP TABLE IF EXISTS user");
             }
         } catch (Exception e) {
-            return;
+            throw new DataAccessException("Error: something went wrong", e);
         }
         try {
             DatabaseManager.configDatabase();
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 }

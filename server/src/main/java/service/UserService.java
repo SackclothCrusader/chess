@@ -11,7 +11,7 @@ public class UserService {
     private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
 
     //Register
-    public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException  {
+    public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException  {
         if (request == null || request.username() == null || request.password() == null
                 || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
             throw new BadRequestException("Error: bad request");
@@ -19,18 +19,28 @@ public class UserService {
         if (userDAO.getUser(request.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        UserData user = userDAO.createUser(request.username(), request.email(), request.password());
+        UserData user;
+        try {
+            user = userDAO.createUser(request.username(), request.email(), request.password());
+        } catch (DataAccessException e) {
+            throw e;
+        }
         AuthData authData = authDAO.createAuthData(user);
         return new Result.RegisterResult(authData.username(), authData.authToken());
     }
 
     //Login
-    public Result.LoginResult login(Request.LoginRequest request) throws UnauthorizedException, BadRequestException  {
+    public Result.LoginResult login(Request.LoginRequest request) throws UnauthorizedException, BadRequestException, DataAccessException  {
         if (request == null || request.username() == null || request.password() == null
                 || request.password().isBlank() || request.username().isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        UserData user = userDAO.getUser(request.username());
+        UserData user;
+        try {
+            user = userDAO.getUser(request.username());
+        } catch (DataAccessException e) {
+            throw e;
+        }
         if (user == null || !request.password().equals(user.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }

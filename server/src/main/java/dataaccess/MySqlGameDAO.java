@@ -5,13 +5,12 @@ import model.GameData;
 import com.google.gson.*;
 
 import java.sql.Types;
-import java.util.Collection;
 import java.util.HashSet;
 
 public class MySqlGameDAO implements GameDAO{
     private static final Gson gson = new Gson();
 
-    public GameData createGame(String gameName) {
+    public GameData createGame(String gameName) throws DataAccessException {
         try {
             var conn = DatabaseManager.getConnection();
             var statement = "INSERT INTO game (gameName, whitePlayer, blackPlayer, game) VALUES (?, ?, ?, ?)";
@@ -29,7 +28,7 @@ public class MySqlGameDAO implements GameDAO{
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error: something went wrong", e);
         }
     }
 
@@ -104,7 +103,7 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
-    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) {
+    public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) throws DataAccessException{
         if (color == ChessGame.TeamColor.WHITE) {
             try {
                 var conn = DatabaseManager.getConnection();
@@ -121,7 +120,7 @@ public class MySqlGameDAO implements GameDAO{
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new DataAccessException("Error: something went wrong", e);
             }
         } else {
             try {
@@ -139,7 +138,7 @@ public class MySqlGameDAO implements GameDAO{
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new DataAccessException("Error: something went wrong", e);
             }
         }
     }
