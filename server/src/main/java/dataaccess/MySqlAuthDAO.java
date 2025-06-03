@@ -5,7 +5,6 @@ import model.UserData;
 
 public class MySqlAuthDAO implements AuthDAO{
     public AuthData createAuthData(UserData user) {
-
         AuthData data = new AuthData(user.username(), generateToken());
 
         try {

@@ -101,12 +101,13 @@ public class DatabaseManager {
         """
         CREATE TABLE IF NOT EXISTS game (
             gameID INT NOT NULL AUTO_INCREMENT,
-            gameName VARCHAR(255) NOT NULL,
+            gameName VARCHAR(255) NOT NULL UNIQUE,
             whitePlayer VARCHAR(255),
             blackPlayer VARCHAR(255),
             game JSON NOT NULL,
             
             PRIMARY KEY (gameID),
+            INDEX idx_gameName (gameName),
             INDEX idx_whitePlayer (whitePlayer),
             INDEX idx_blackPlayer (blackPlayer),
             FOREIGN KEY (whitePlayer) REFERENCES user(username) ON DELETE SET NULL ON UPDATE CASCADE,

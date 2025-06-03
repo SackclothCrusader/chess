@@ -109,18 +109,19 @@ public class SqlTests {
     }
 
     @Test
-    public void positiveListGamesTest() {
-
+    public void positiveAddGameTest() {
+        System.out.println(gameDAO.createGame("newGame"));
     }
 
     @Test
-    public void negativeListGamesTest() {
-
+    public void negativeAddGameTest() {
+        //System.out.println(gameDAO.createGame(null));
     }
 
     @Test
-    public void positiveJoinGameTest() {
-
+    public void positiveFindGameTest() {
+        GameData game = gameDAO.createGame("newGame");
+        System.out.println(gameDAO.getGame(game.gameID()));
     }
 
     @Test
