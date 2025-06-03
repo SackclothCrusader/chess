@@ -48,8 +48,6 @@ public class DatabaseManager {
             var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
 
             conn.setCatalog(databaseName);
-            System.out.println("Connected!!");
-
             return conn;
         } catch (SQLException ex) {
             throw new DataAccessException("failed to get connection", ex);

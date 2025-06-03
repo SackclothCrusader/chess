@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.Test;
 
@@ -125,7 +126,25 @@ public class SqlTests {
     }
 
     @Test
-    public void negativeJoinGameTest() {
+    public void positiveUpdatePlayerTest() {
+        clearDAO.clear();
+        GameData game = gameDAO.createGame("newGame");
+        userDAO.createUser("me", "email", "pass");
+        userDAO.createUser("you", "email2", "pass");
+        gameDAO.addPlayer("me", ChessGame.TeamColor.WHITE, game.gameID());
+        gameDAO.addPlayer("you", ChessGame.TeamColor.BLACK, game.gameID());
+        System.out.println(gameDAO.getGame(game.gameID()));
+    }
 
+    @Test
+    public void negativeUpdatePlayerTest() {
+        clearDAO.clear();
+        GameData game = gameDAO.createGame("newGame");
+        userDAO.createUser("me", "email", "pass");
+        gameDAO.addPlayer("me", ChessGame.TeamColor.BLACK, game.gameID());
+        gameDAO.addPlayer("me", ChessGame.TeamColor.WHITE, game.gameID());
+        gameDAO.addPlayer("me", ChessGame.TeamColor.BLACK, game.gameID());
+        gameDAO.addPlayer("me", ChessGame.TeamColor.WHITE, game.gameID());
+        System.out.println(gameDAO.getGame(game.gameID()));
     }
 }

@@ -105,7 +105,43 @@ public class MySqlGameDAO implements GameDAO{
     }
 
     public GameData addPlayer(String username, ChessGame.TeamColor color, int gameID) {
-        return null;
+        if (color == ChessGame.TeamColor.WHITE) {
+            try {
+                var conn = DatabaseManager.getConnection();
+                var statement = "UPDATE game SET whitePlayer = ? WHERE gameID = ?";
+                try (var stmt = conn.prepareStatement(statement)) {
+                    stmt.setString(1, username);
+                    stmt.setInt(2, gameID);
+
+
+                    if (stmt.executeUpdate() == 1) {
+                        return getGame(gameID);
+                    } else {
+                        return null;
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                var conn = DatabaseManager.getConnection();
+                var statement = "UPDATE game SET blackPlayer = ? WHERE gameID = ?";
+                try (var stmt = conn.prepareStatement(statement)) {
+                    stmt.setString(1, username);
+                    stmt.setInt(2, gameID);
+
+
+                    if (stmt.executeUpdate() == 1) {
+                        return getGame(gameID);
+                    } else {
+                        return null;
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public GameData updateGame(GameData game) {
