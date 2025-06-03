@@ -17,6 +17,10 @@ public class SqlTests {
 
     @Test
     public void positiveAddUserTest() {
+        try {DatabaseManager.configDatabase();}
+        catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         userDAO.createUser("user", "email", "password");
     }
 

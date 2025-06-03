@@ -4,7 +4,7 @@ import model.UserData;
 
 public interface UserDAO {
     //C (make user)
-    abstract UserData createUser(String username, String password, String email) throws DataAccessException;
+    abstract UserData createUser(String username, String email, String password) throws DataAccessException;
 
     //R (find user)
     static UserData getUser(String username) {

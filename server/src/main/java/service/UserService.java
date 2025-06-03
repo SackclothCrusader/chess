@@ -7,7 +7,7 @@ import server.Request;
 import server.Result;
 
 public class UserService {
-    private final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final MySqlUserDAO userDAO = new MySqlUserDAO();
     private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
 
     //Register
@@ -19,7 +19,7 @@ public class UserService {
         if (userDAO.getUser(request.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        UserData user = userDAO.createUser(request.username(), request.password(), request.email());
+        UserData user = userDAO.createUser(request.username(), request.email(), request.password());
         AuthData authData = authDAO.createAuthData(user);
         return new Result.RegisterResult(authData.username(), authData.authToken());
     }

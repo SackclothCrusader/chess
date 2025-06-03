@@ -9,7 +9,7 @@ public class MemoryUserDAO implements UserDAO {
 
     //C (make user)
     public UserData createUser(String username, String password, String email){
-        UserData user = new UserData(username, password, email);
+        UserData user = new UserData(username, email, password);
         users.add(user);
         return user;
     }
