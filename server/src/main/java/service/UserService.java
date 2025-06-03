@@ -8,7 +8,7 @@ import server.Result;
 
 public class UserService {
     private final MySqlUserDAO userDAO = new MySqlUserDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
 
     //Register
     public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException  {
@@ -41,11 +41,7 @@ public class UserService {
     //Logout
     public Result.LogoutResult logout(Request.LogoutRequest request) throws DataAccessException{
         AuthData authData = authDAO.getAuthData(request.authToken());
-        try {
-            authDAO.deleteAuthData(authData);
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        authDAO.deleteAuthData(authData);
         return new Result.LogoutResult();
     }
 }

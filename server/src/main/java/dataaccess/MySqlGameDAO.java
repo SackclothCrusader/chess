@@ -77,7 +77,7 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
-    public Collection<GameData> listGames() {
+    public HashSet<GameData> listGames() {
         HashSet<GameData> gameList = new HashSet<>();
 
         try {

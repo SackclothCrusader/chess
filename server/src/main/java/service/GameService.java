@@ -8,8 +8,8 @@ import server.Request;
 import server.Result;
 
 public class GameService {
-    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final MySqlGameDAO gameDAO = new MySqlGameDAO();
+    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
 
     //list games
     public Result.ListGamesResult listGames(Request.ListGamesRequest request) {

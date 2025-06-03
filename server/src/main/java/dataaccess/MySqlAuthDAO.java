@@ -46,6 +46,27 @@ public class MySqlAuthDAO implements AuthDAO{
         }
     }
 
+    public AuthData getAuthData(String authToken) {
+        try {
+            var conn = DatabaseManager.getConnection();
+
+            var statement = "SELECT username, authToken FROM auth WHERE authToken = ?";
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, authToken);
+
+                try (var rs = stmt.executeQuery()) {
+                    rs.next();
+                    var username = rs.getString("username");
+                    var token = rs.getString("authToken");
+
+                    return new AuthData(username, token);
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public void deleteAuthData(AuthData data) {
         try {
             var conn = DatabaseManager.getConnection();
