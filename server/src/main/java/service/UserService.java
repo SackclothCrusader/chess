@@ -21,11 +21,7 @@ public class UserService {
             throw new AlreadyTakenException("Error: already taken");
         }
         UserData user;
-        try {
-            user = userDAO.createUser(request.username(), request.email(), request.password());
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        user = userDAO.createUser(request.username(), request.email(), request.password());
         AuthData authData = authDAO.createAuthData(user);
         return new Result.RegisterResult(authData.username(), authData.authToken());
     }

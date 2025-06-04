@@ -22,11 +22,7 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
         GameData game;
-        try {
-            game = gameDAO.createGame(request.gameName());
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        game = gameDAO.createGame(request.gameName());
         return new Result.CreateGameResult(game.gameID());
     }
 
@@ -44,12 +40,7 @@ public class GameService {
         || request.color() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-
-        try {
-            gameDAO.addPlayer(user.username(), request.color(), request.gameID());
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        gameDAO.addPlayer(user.username(), request.color(), request.gameID());
         return new Result.JoinGameResult();
     }
 }

@@ -1,8 +1,7 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MySqlAuthDAO;
+import dataaccess.*;
 
 public class AuthService {
     private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
