@@ -1,6 +1,8 @@
 package server;
 
+import dataaccess.DataAccessException;
 import spark.*;
+import dataaccess.DatabaseManager;
 
 public class Server {
     public static void main(String[] args) {
@@ -8,6 +10,11 @@ public class Server {
     }
 
     public int run(int desiredPort) {
+        try {
+            DatabaseManager.configDatabase();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
