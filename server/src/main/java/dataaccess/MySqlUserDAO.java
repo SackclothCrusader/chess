@@ -1,22 +1,11 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
-import javax.xml.crypto.Data;
-
 public class MySqlUserDAO implements UserDAO {
-//    public void example() throws Exception {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
-//                var rs = preparedStatement.executeQuery();
-//                rs.next();
-//                System.out.println(rs.getInt(1));
-//            }
-//        }
-//    }
-
-    public UserData createUser(String username, String email, String password) throws DataAccessException{
+    public UserData createUser(String username, String email, String password) throws DataAccessException {
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
         UserData data = new UserData(username, email, hashedPassword);

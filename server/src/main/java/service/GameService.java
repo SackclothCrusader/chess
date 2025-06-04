@@ -1,5 +1,8 @@
 package service;
 
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
 import chess.ChessGame;
 import dataaccess.*;
 import model.AuthData;
@@ -8,12 +11,12 @@ import server.Request;
 import server.Result;
 
 public class GameService {
-    private final MemoryGameDAO gameDAO = new MemoryGameDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final MemoryGameDAO GAME_DAO = new MemoryGameDAO();
+    private final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     //list games
     public Result.ListGamesResult listGames(Request.ListGamesRequest request) {
-        return new Result.ListGamesResult(gameDAO.listGames());
+        return new Result.ListGamesResult(GAME_DAO.listGames());
     }
 
     //create game
@@ -22,7 +25,7 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
         GameData game;
-        game = gameDAO.createGame(request.gameName());
+        game = GAME_DAO.createGame(request.gameName());
         return new Result.CreateGameResult(game.gameID());
     }
 
@@ -31,8 +34,8 @@ public class GameService {
         if (request == null  || request.color() == null || request.authToken() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        GameData game = gameDAO.getGame(request.gameID());
-        AuthData user = authDAO.getAuthData(request.authToken());
+        GameData game = GAME_DAO.getGame(request.gameID());
+        AuthData user = AUTH_DAO.getAuthData(request.authToken());
         if (game == null || user == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -40,7 +43,7 @@ public class GameService {
         || request.color() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        gameDAO.addPlayer(user.username(), request.color(), request.gameID());
+        GAME_DAO.addPlayer(user.username(), request.color(), request.gameID());
         return new Result.JoinGameResult();
     }
 }

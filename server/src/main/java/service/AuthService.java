@@ -1,13 +1,13 @@
 package service;
 
-import dataaccess.DataAccessException;
+import exceptions.DataAccessException;
 import dataaccess.*;
 
 public class AuthService {
-    private static final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     public static boolean authenticate(String authToken) throws DataAccessException {
-        if (authDAO.getAuthData(authToken) == null) {
+        if (AUTH_DAO.getAuthData(authToken) == null) {
             return false;
         }
         return true;

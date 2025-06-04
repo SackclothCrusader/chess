@@ -1,10 +1,11 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
 public class MySqlAuthDAO implements AuthDAO{
-    public AuthData createAuthData(UserData user) throws DataAccessException{
+    public AuthData createAuthData(UserData user) throws DataAccessException {
         AuthData data = new AuthData(user.username(), generateToken());
 
         try {

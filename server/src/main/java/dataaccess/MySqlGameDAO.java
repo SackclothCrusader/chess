@@ -1,5 +1,6 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import chess.ChessGame;
 import model.GameData;
 import com.google.gson.*;
@@ -143,9 +144,9 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
-    public GameData updateGame(GameData game) {
-        return null;
-    }
+//    public GameData updateGame(GameData game) {
+//        return null;
+//    }
 
     private String gameToJson(ChessGame game) {
         var json = gson.toJson(game);

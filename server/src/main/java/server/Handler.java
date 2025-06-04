@@ -1,8 +1,11 @@
 package server;
 
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
 import chess.ChessGame;
 import com.google.gson.*;
-import dataaccess.*;
 import service.AuthService;
 import service.ClearService;
 import service.GameService;
@@ -13,7 +16,7 @@ public class Handler {
     static final Gson GSON = new GsonBuilder().registerTypeHierarchyAdapter(Exception.class, new ExceptionTypeAdapter()).create();
 
     //authorization
-    private static boolean authenticate(String authToken) throws DataAccessException{
+    private static boolean authenticate(String authToken) throws DataAccessException {
         return AuthService.authenticate(authToken);
     }
 

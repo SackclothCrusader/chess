@@ -1,5 +1,9 @@
 package service;
 
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
@@ -8,21 +12,21 @@ import server.Request;
 import server.Result;
 
 public class UserService {
-    private final MemoryUserDAO userDAO = new MemoryUserDAO();
-    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
+    private final MemoryUserDAO USER_DAO = new MemoryUserDAO();
+    private final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     //Register
-    public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException  {
+    public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException {
         if (request == null || request.username() == null || request.password() == null
                 || request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()) {
             throw new BadRequestException("Error: bad request");
         }
-        if (userDAO.getUser(request.username()) != null) {
+        if (USER_DAO.getUser(request.username()) != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
         UserData user;
-        user = userDAO.createUser(request.username(), request.email(), request.password());
-        AuthData authData = authDAO.createAuthData(user);
+        user = USER_DAO.createUser(request.username(), request.email(), request.password());
+        AuthData authData = AUTH_DAO.createAuthData(user);
         return new Result.RegisterResult(authData.username(), authData.authToken());
     }
 
@@ -32,18 +36,18 @@ public class UserService {
                 || request.password().isBlank() || request.username().isBlank()) {
             throw new BadRequestException("Error: bad request");
         }
-        UserData user = userDAO.getUser(request.username());
+        UserData user = USER_DAO.getUser(request.username());
         if (user == null || !BCrypt.checkpw(request.password(), user.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        AuthData authData = authDAO.createAuthData(user);
+        AuthData authData = AUTH_DAO.createAuthData(user);
         return new Result.LoginResult(authData.username(), authData.authToken());
     }
 
     //Logout
     public Result.LogoutResult logout(Request.LogoutRequest request) throws DataAccessException{
-        AuthData authData = authDAO.getAuthData(request.authToken());
-        authDAO.deleteAuthData(authData);
+        AuthData authData = AUTH_DAO.getAuthData(request.authToken());
+        AUTH_DAO.deleteAuthData(authData);
         return new Result.LogoutResult();
     }
 }

@@ -1,8 +1,8 @@
 package dataaccess;
 
+import exceptions.DataAccessException;
 import chess.ChessGame;
 import model.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class SqlTests {
@@ -12,7 +12,7 @@ public class SqlTests {
     private MySqlGameDAO gameDAO = new MySqlGameDAO();
 
     @Test
-    public void clearTest() throws DataAccessException{
+    public void clearTest() throws DataAccessException {
         try {
             clearDAO.clear();
         } catch (Exception e) {
