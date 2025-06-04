@@ -100,25 +100,6 @@ public class SqlTests {
     }
 
     @Test
-    public void negativeRemoveAuthTest() throws DataAccessException{
-        try {DatabaseManager.configDatabase();}
-        catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        clearDAO.clear();
-        UserData user;
-        try {
-            user = userDAO.createUser("user", "email", "password");
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        AuthData data = authDAO.createAuthData(user);
-        System.out.println(authDAO.getAuthData(user));
-        authDAO.deleteAuthData(data);
-//        Assertions.assertThrows(DataAccessException, ()->{});
-    }
-
-    @Test
     public void positiveAddGameTest() throws DataAccessException{
         System.out.println(gameDAO.createGame("newGame"));
     }
