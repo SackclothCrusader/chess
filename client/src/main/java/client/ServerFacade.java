@@ -1,7 +1,8 @@
 package client;
 
 import com.google.gson.Gson;
-
+import exceptions.ResponseException;
+import model.Request;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,7 +18,13 @@ public class ServerFacade {
         this.url = url;
     }
 
-    private <T> T makeRequest(String method, String path, Object req, Class<T> resClass) {
+    public String register(String username, String password, String email) {
+        String path = "/user";
+        Request.RegisterRequest req = new Request.RegisterRequest(username, password, email);
+        return this.makeRequest("POST", path, req, )
+    }
+
+    private <T> T makeRequest(String method, String path, Object req, Class<T> resClass) throws ResponseException {
         try {
             URL url = (new URI(this.url + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -29,8 +36,8 @@ public class ServerFacade {
             throwOnFail(http);
 
             return readBody(http, resClass);
-        } catch (Exception e) {
-            return null;
+        } catch (IOException e) {
+            throw new ResponseException(500, "Error");
         }
     }
 
@@ -57,7 +64,10 @@ public class ServerFacade {
         return res;
     }
 
-    private void throwOnFail(HttpURLConnection http) throws IOException {
-
+    private void throwOnFail(HttpURLConnection http) throws IOException, ResponseException {
+        var status = http.getResponseCode();
+        if(!(status/100 == 2)) {
+            throw new ResponseException(status, "Error");
+        }
     }
 }

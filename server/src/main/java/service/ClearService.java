@@ -2,8 +2,8 @@ package service;
 
 import exceptions.DataAccessException;
 import dataaccess.*;
-import server.Result;
-import server.Request;
+import model.Result;
+import model.Request;
 
 public class ClearService {
     private static final MySqlClearDAO CLEAR_DAO = new MySqlClearDAO();

@@ -7,8 +7,8 @@ import chess.ChessGame;
 import dataaccess.*;
 import model.AuthData;
 import model.GameData;
-import server.Request;
-import server.Result;
+import model.Request;
+import model.Result;
 
 public class GameService {
     private static final MySqlGameDAO GAME_DAO = new MySqlGameDAO();

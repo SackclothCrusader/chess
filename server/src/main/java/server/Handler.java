@@ -6,6 +6,8 @@ import exceptions.DataAccessException;
 import exceptions.UnauthorizedException;
 import chess.ChessGame;
 import com.google.gson.*;
+import model.Request;
+import model.Result;
 import service.AuthService;
 import service.ClearService;
 import service.GameService;

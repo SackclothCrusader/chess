@@ -8,8 +8,8 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.Request;
-import server.Result;
+import model.Request;
+import model.Result;
 
 public class UserService {
     private static final MySqlUserDAO USER_DAO = new MySqlUserDAO();

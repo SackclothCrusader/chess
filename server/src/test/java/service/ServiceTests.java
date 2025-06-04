@@ -1,11 +1,6 @@
 package service;
 
 import org.junit.jupiter.api.Test;
-import dataaccess.*;
-import model.*;
-import server.Request;
-import server.Result;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
     @Test
