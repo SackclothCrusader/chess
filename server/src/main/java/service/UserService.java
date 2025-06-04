@@ -8,8 +8,8 @@ import server.Request;
 import server.Result;
 
 public class UserService {
-    private final MySqlUserDAO userDAO = new MySqlUserDAO();
-    private final MySqlAuthDAO authDAO = new MySqlAuthDAO();
+    private final MemoryUserDAO userDAO = new MemoryUserDAO();
+    private final MemoryAuthDAO authDAO = new MemoryAuthDAO();
 
     //Register
     public Result.RegisterResult register(Request.RegisterRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException  {
