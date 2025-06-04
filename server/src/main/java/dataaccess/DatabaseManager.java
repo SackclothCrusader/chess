@@ -78,7 +78,7 @@ public class DatabaseManager {
         connectionUrl = String.format("jdbc:mysql://%s:%d", host, port);
     }
 
-    private static final String[] createStatements = {
+    private static final String[] CREATE_STATEMENTS = {
         """
         CREATE TABLE IF NOT EXISTS user (
             username VARCHAR(255) NOT NULL,
@@ -123,7 +123,7 @@ public class DatabaseManager {
         }
 
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
+            for (var statement : CREATE_STATEMENTS) {
                 try (var prepStatement = conn.prepareStatement(statement)) {
                     prepStatement.executeUpdate();
                 }

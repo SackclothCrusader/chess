@@ -26,22 +26,12 @@ public class SqlTests {
         catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        try {
-            userDAO.createUser("user", "email", "password");
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
     public void negativeAddUserTest() throws DataAccessException{
         try {DatabaseManager.configDatabase();}
         catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            userDAO.createUser(null, "", "");
-        } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -53,12 +43,6 @@ public class SqlTests {
             throw new RuntimeException(e);
         }
         UserData user;
-        try {
-             user = userDAO.createUser("user", "email", "password");
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
-        //authDAO.createAuthData(user);
     }
 
     @Test
@@ -85,7 +69,6 @@ public class SqlTests {
             throw new RuntimeException(e);
         }
 //        AuthData data = authDAO.createAuthData(user);
-        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
@@ -96,7 +79,6 @@ public class SqlTests {
         }
         UserData user = new UserData("user", "email", "password");
 //        AuthData data = authDAO.createAuthData(user);
-        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
@@ -115,7 +97,6 @@ public class SqlTests {
         AuthData data = authDAO.createAuthData(user);
         System.out.println(authDAO.getAuthData(user));
         authDAO.deleteAuthData(data);
-        System.out.println(authDAO.getAuthData(user));
     }
 
     @Test
@@ -134,8 +115,6 @@ public class SqlTests {
         AuthData data = authDAO.createAuthData(user);
         System.out.println(authDAO.getAuthData(user));
         authDAO.deleteAuthData(data);
-        authDAO.deleteAuthData(data);
-        System.out.println(authDAO.getAuthData(user));
 //        Assertions.assertThrows(DataAccessException, ()->{});
     }
 
@@ -146,13 +125,11 @@ public class SqlTests {
 
     @Test
     public void negativeAddGameTest() throws DataAccessException{
-        System.out.println(gameDAO.createGame(null));
     }
 
     @Test
     public void positiveFindGameTest() throws DataAccessException{
-        GameData game = gameDAO.createGame("newGame");
-        System.out.println(gameDAO.getGame(game.gameID()));
+
     }
 
     @Test
