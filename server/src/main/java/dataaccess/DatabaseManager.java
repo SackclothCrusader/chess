@@ -24,7 +24,6 @@ public class DatabaseManager {
         try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword);
              var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
-            System.out.println("Created Database!");
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
