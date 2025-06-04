@@ -6,7 +6,7 @@ import server.Result;
 import server.Request;
 
 public class ClearService {
-    private final MemoryClearDAO CLEAR_DAO = new MemoryClearDAO();
+    private static final MySqlClearDAO CLEAR_DAO = new MySqlClearDAO();
 
     public Result.DeleteResult clear(Request.DeleteRequest request) throws DataAccessException{
         CLEAR_DAO.clear();

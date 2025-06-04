@@ -9,7 +9,7 @@ import java.sql.Types;
 import java.util.HashSet;
 
 public class MySqlGameDAO implements GameDAO{
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     public GameData createGame(String gameName) throws DataAccessException {
         try {
@@ -144,17 +144,13 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
-//    public GameData updateGame(GameData game) {
-//        return null;
-//    }
-
     private String gameToJson(ChessGame game) {
-        var json = gson.toJson(game);
+        var json = GSON.toJson(game);
         return json.toString();
     }
 
     private ChessGame gameFromJson(String jsonString) {
-        ChessGame game = gson.fromJson(jsonString, ChessGame.class);
+        ChessGame game = GSON.fromJson(jsonString, ChessGame.class);
         return game;
     }
 }

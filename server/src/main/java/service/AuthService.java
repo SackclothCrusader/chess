@@ -4,7 +4,7 @@ import exceptions.DataAccessException;
 import dataaccess.*;
 
 public class AuthService {
-    private static final MemoryAuthDAO AUTH_DAO = new MemoryAuthDAO();
+    private static final MySqlAuthDAO AUTH_DAO = new MySqlAuthDAO();
 
     public static boolean authenticate(String authToken) throws DataAccessException {
         if (AUTH_DAO.getAuthData(authToken) == null) {
