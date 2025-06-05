@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.Server;
 import exceptions.ResponseException;
@@ -111,5 +112,23 @@ public class ServerFacadeTests {
     public void negAddGameTest() {
         facade.register("user", "password", "email");
         Assertions.assertThrows(ResponseException.class, ()->{facade.createGame("not_a_token", null);});
+    }
+    @Test
+    public void posJoinGameTest() {
+        String token = facade.register("user", "password", "email");
+        final int gameID = facade.createGame(token, "Game_1");
+        System.out.println(facade.listGames(token));
+        Assertions.assertDoesNotThrow(()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
+        Assertions.assertDoesNotThrow(()->{facade.joinGame(token, ChessGame.TeamColor.BLACK, gameID);});
+        System.out.println(facade.listGames(token));
+    }
+
+    @Test
+    public void negJoinGameTest() {
+        String token = facade.register("user", "password", "email");
+        final int gameID = facade.createGame(token, "Game_1");
+        System.out.println(facade.listGames(token));
+        Assertions.assertDoesNotThrow(()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
+        Assertions.assertThrows(ResponseException.class, ()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
     }
 }

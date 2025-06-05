@@ -152,7 +152,7 @@ public class Handler {
                 return GSON.toJson(e);
             }
 
-            var tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("playerColor");
+            var tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("color");
             if (tmp == null) {
                 res.status(400);
                 return GSON.toJson(new BadRequestException("Error: bad request"));

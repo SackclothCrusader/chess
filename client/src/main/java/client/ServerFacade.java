@@ -14,6 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Collection;
+import chess.ChessGame.TeamColor;
 
 public class ServerFacade {
     private final String url;
@@ -59,6 +60,12 @@ public class ServerFacade {
         Request.CreateGameRequest req = new Request.CreateGameRequest(authToken, gameName);
         Result.CreateGameResult game = makeRequest("POST", path, req, Result.CreateGameResult.class, authToken);
         return game.gameID();
+    }
+
+    public void joinGame(String authToken, TeamColor playerColor, int gameID) {
+        String path = "/game";
+        Request.JoinGameRequest req = new Request.JoinGameRequest(authToken, playerColor, gameID);
+        makeRequest("PUT", path, req, Result.JoinGameResult.class, authToken);
     }
 
 
