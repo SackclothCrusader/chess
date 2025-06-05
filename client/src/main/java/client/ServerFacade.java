@@ -54,6 +54,13 @@ public class ServerFacade {
         return games.games();
     }
 
+    public int createGame(String authToken, String gameName) {
+        String path = "/game";
+        Request.CreateGameRequest req = new Request.CreateGameRequest(authToken, gameName);
+        Result.CreateGameResult game = makeRequest("POST", path, req, Result.CreateGameResult.class, authToken);
+        return game.gameID();
+    }
+
 
 
     //helper functions
@@ -77,16 +84,6 @@ public class ServerFacade {
     }
 
     private static void writeBody(Object req, HttpURLConnection http) throws IOException {
-        if (req != null) {
-            http.addRequestProperty("Content-Type", "application/json");
-            String reqData = new Gson().toJson(req);
-            try(OutputStream reqBody = http.getOutputStream()) {
-                reqBody.write(reqData.getBytes());
-            }
-        }
-    }
-
-    private static void writeHeader(String req, HttpURLConnection http) throws IOException {
         if (req != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(req);

@@ -99,4 +99,17 @@ public class ServerFacadeTests {
         facade.register("user", "password", "email");
         Assertions.assertThrows(ResponseException.class, ()->{facade.listGames("not_a_token");});
     }
+
+    @Test
+    public void posAddGameTest() {
+        String token = facade.register("user", "password", "email");
+        Assertions.assertDoesNotThrow(()->{facade.createGame(token, "Game_1");});
+        System.out.println(facade.listGames(token));
+    }
+
+    @Test
+    public void negAddGameTest() {
+        facade.register("user", "password", "email");
+        Assertions.assertThrows(ResponseException.class, ()->{facade.createGame("not_a_token", null);});
+    }
 }
