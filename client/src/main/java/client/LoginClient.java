@@ -20,7 +20,7 @@ public class LoginClient {
         };
     }
 
-    private boolean help() {
+    public boolean help() {
         System.out.println("""
                 Please register or log in to access the main service.
                
