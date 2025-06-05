@@ -2,6 +2,7 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
+import exceptions.ResponseException;
 
 public class ServerFacadeTests {
 
@@ -39,6 +40,16 @@ public class ServerFacadeTests {
 
     @Test
     public void posRegisterTest() {
-        Assertions.assertDoesNotThrow(()->{facade.register("user", "password", "email");});
+        Assertions.assertDoesNotThrow(() -> {
+            facade.register("user", "password", "email");
+        });
+    }
+
+    @Test
+    public void negRegisterTest() {
+        facade.register("user", "password", "email");
+        Assertions.assertThrows(ResponseException.class, ()->{facade.register("user", "password", "email");});
+    }
+
 
 }
