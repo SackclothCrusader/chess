@@ -1,9 +1,6 @@
 package server;
 
-import exceptions.AlreadyTakenException;
-import exceptions.BadRequestException;
-import exceptions.DataAccessException;
-import exceptions.UnauthorizedException;
+import exceptions.*;
 import chess.ChessGame;
 import com.google.gson.*;
 import model.Request;
@@ -65,7 +62,6 @@ public class Handler {
         //logout [DELETE] /session
         public static Object logout(spark.Request req, spark.Response res) {
             String authToken = req.headers("authorization");
-
             try {
                 if (!authenticate(authToken)) {
                     res.status(401);

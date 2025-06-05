@@ -3,12 +3,14 @@ package client;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
 import model.Request;
+import model.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ServerFacade {
@@ -18,10 +20,16 @@ public class ServerFacade {
         this.url = url;
     }
 
-    public String register(String username, String password, String email) {
+    public void clear() {
+        String path = "/db";
+        makeRequest("DELETE", path, null, null);
+    }
+
+    public String register(String username, String password, String email) throws ResponseException {
         String path = "/user";
         Request.RegisterRequest req = new Request.RegisterRequest(username, password, email);
-        return this.makeRequest("POST", path, req, )
+        Result.RegisterResult res = makeRequest("POST", path, req, Result.RegisterResult.class);
+        return res.authToken();
     }
 
     private <T> T makeRequest(String method, String path, Object req, Class<T> resClass) throws ResponseException {
@@ -36,7 +44,7 @@ public class ServerFacade {
             throwOnFail(http);
 
             return readBody(http, resClass);
-        } catch (IOException e) {
+        } catch (IOException | URISyntaxException e) {
             throw new ResponseException(500, "Error");
         }
     }
