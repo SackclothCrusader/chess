@@ -39,6 +39,12 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void clearEmpty() {
+        facade.clear();
+        Assertions.assertDoesNotThrow(()->{facade.clear();});
+    }
+
+    @Test
     public void posRegisterTest() {
         Assertions.assertDoesNotThrow(() -> {
             facade.register("user", "password", "email");
@@ -51,5 +57,46 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ResponseException.class, ()->{facade.register("user", "password", "email");});
     }
 
+    @Test
+    public void posLoginTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            facade.register("user", "password", "email");
+            facade.login("user", "password");
+        });
+    }
 
+    @Test
+    public void negLoginTest() {
+        facade.register("user", "password", "email");
+        Assertions.assertThrows(ResponseException.class, ()->{facade.login("user", "BAD_PASSWORD");});
+    }
+
+    @Test
+    public void posLogoutTest() {
+        Assertions.assertDoesNotThrow(() -> {
+            String token = facade.register("user", "password", "email");
+            facade.logout(token);
+            token = facade.login("user", "password");
+            facade.logout(token);
+        });
+    }
+
+    @Test
+    public void negLogoutTest() {
+        facade.register("user", "password", "email");
+        Assertions.assertThrows(ResponseException.class, ()->{facade.logout("not_a_token");});
+    }
+
+    @Test
+    public void posListGameTest() {
+        String token = facade.register("user", "password", "email");
+        Assertions.assertDoesNotThrow(()->{facade.listGames(token);});
+        System.out.println(facade.listGames(token));
+    }
+
+    @Test
+    public void negListGameTest() {
+        facade.register("user", "password", "email");
+        Assertions.assertThrows(ResponseException.class, ()->{facade.listGames("not_a_token");});
+    }
 }
