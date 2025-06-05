@@ -8,7 +8,8 @@ public class Repl {
     private final HomeClient homeClient;
     private final GameClient gameClient;
 
-    Repl(String url) {
+    public Repl(String url) {
+        AUTH = "";
         loginClient = new LoginClient(url);
         homeClient = new HomeClient(url);
         gameClient = new GameClient(url);
@@ -21,7 +22,7 @@ public class Repl {
 
         Boolean quit = false;
         int gameID = -1;
-        while(quit) {
+        while(!quit) {
             String line = scanner.nextLine();
 
             if(AUTH.isEmpty()) {
@@ -31,9 +32,9 @@ public class Repl {
                 }
             }
 
-            if(gameID < 0) {
-                homeClient.eval(line);
-            }
+//            if(gameID < 0) {
+//                homeClient.eval(line);
+//            }
         }
     }
 }

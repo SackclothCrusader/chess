@@ -12,12 +12,16 @@ public class LoginClient {
     public boolean eval(String in) {
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
-        return switch (cmd) {
-            case "register" -> register(tokens[1], tokens[2], tokens[3]);
-            case "login" -> login(tokens[1], tokens[2]);
-            case "quit" -> quit();
-            default -> help();
-        };
+        try {
+            return switch (cmd) {
+                case "register" -> register(tokens[1], tokens[2], tokens[3]);
+                case "login" -> login(tokens[1], tokens[2]);
+                case "quit" -> quit();
+                default -> help();
+            };
+        } catch (Exception e) {
+            return help();
+        }
     }
 
     public boolean help() {
