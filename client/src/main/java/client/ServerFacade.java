@@ -68,8 +68,6 @@ public class ServerFacade {
         makeRequest("PUT", path, req, Result.JoinGameResult.class, authToken);
     }
 
-
-
     //helper functions
     private <T> T makeRequest(String method, String path, Object req, Class<T> resClass, String auth) throws ResponseException {
         try {
