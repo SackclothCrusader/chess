@@ -53,28 +53,29 @@ public class GameClient {
     private String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
         String columns[] = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String border = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
 
-        emptyBoard[0][0] = "0";
-        emptyBoard[9][9] = "0";
-        emptyBoard[0][9] = "0";
-        emptyBoard[9][0] = "0";
+        emptyBoard[0][0] = border + " ";
+        emptyBoard[9][9] = border + " ";
+        emptyBoard[0][9] = border + " ";
+        emptyBoard[9][0] = border + " ";
 
         //white
         if (perspective == ChessGame.TeamColor.WHITE) {
             for (int i = 1; i <= 8; i++) {
-                emptyBoard[0][i] = columns[i-1];
-                emptyBoard[9][i] = columns[i-1];
-                emptyBoard[i][0] = Integer.toString(9-i);
-                emptyBoard[i][9] = Integer.toString(9-i);
+                emptyBoard[0][i] = border + columns[i-1];
+                emptyBoard[9][i] = border + columns[i-1];
+                emptyBoard[i][0] = border + Integer.toString(9-i);
+                emptyBoard[i][9] = border + Integer.toString(9-i);
             }
         }
         //black
         else {
             for (int i = 1; i <= 8; i++) {
-                emptyBoard[0][i] = columns[8-i];
-                emptyBoard[9][i] = columns[8-i];
-                emptyBoard[i][0] = Integer.toString(i);
-                emptyBoard[i][9] = Integer.toString(i);
+                emptyBoard[0][i] = border + columns[8-i];
+                emptyBoard[9][i] = border + columns[8-i];
+                emptyBoard[i][0] = border + Integer.toString(i);
+                emptyBoard[i][9] = border + Integer.toString(i);
             }
         }
 
@@ -93,13 +94,32 @@ public class GameClient {
         return emptyBoard;
     }
 
+    private String[][] fillBoard(String[][] board, int gameID) {
+        return board;
+    }
+
     private void printBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                System.out.print(board[i][j] + "   " + EscapeSequences.RESET_BG_COLOR);
+
+
+        // Loop through all rows
+        for (int i = 0; i < board.length; i++) {
+            // Loop through columns in the current row
+            for (int j = 0; j < board[i].length; j++) {
+                String cell = board[i][j];
+
+                // If cell is null, print empty 3 spaces
+                if (cell == null) {
+                    System.out.print("   ");
+                } else {
+                    // Print the cell content
+                    System.out.print(cell);
+                }
+
+                // Reset colors after each cell to avoid color bleeding
+                System.out.print(EscapeSequences.RESET_BG_COLOR);
             }
-            System.out.println();
+            System.out.println(); // New line at end of row
         }
     }
 }
