@@ -34,6 +34,7 @@ public class HomeClient {
     }
 
     private boolean quit() {
+        facade.logout(Repl.AUTH);
         System.out.println("Goodbye :)");
         return true;
     }
@@ -42,21 +43,20 @@ public class HomeClient {
         try {
             facade.logout(Repl.AUTH);
             Repl.AUTH = "";
+            System.out.println("You have been logged out.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
         }
-        System.out.println("You have been logged out.");
         return false;
     }
 
     private boolean create(String name){
         try {
             facade.createGame(Repl.AUTH, name);
-
+            System.out.println("Game " + name + " has been created.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
         }
-        System.out.println("Game " + name + " has been created.");
         return false;
     }
 
@@ -64,13 +64,13 @@ public class HomeClient {
         Collection<GameData> games = null;
         try {
             games = facade.listGames(Repl.AUTH);
+            System.out.println("Games:");
+            for (GameData game : games) {
+                System.out.println(game); // relies on your custom toString()
+            }
 
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
-        }
-        System.out.println("Games:");
-        for (GameData game : games) {
-            System.out.println(game);
         }
         return false;
     }
@@ -92,10 +92,10 @@ public class HomeClient {
         try {
             facade.joinGame(Repl.AUTH, color, gameID);
             Repl.GAME_ID = gameID;
+            System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
         }
-        System.out.println("Game has been joined.");
         return false;
     }
 

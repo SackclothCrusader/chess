@@ -5,7 +5,6 @@ import ui.EscapeSequences;
 
 public class GameClient {
     private ServerFacade facade;
-
     GameClient(String url) {
         facade = new ServerFacade(url);
     }
@@ -48,20 +47,52 @@ public class GameClient {
         return false;
     }
 
-    private String emptyBoard(int gameID, ChessGame.TeamColor perspective) {
-        System.out.print(EscapeSequences.ERASE_SCREEN);
+    private String[][] emptyBoard(ChessGame.TeamColor perspective) {
+        String emptyBoard[][] = new String[10][10];
+        String columns[] = {"a", "b", "c", "d", "e", "f", "g", "h"};
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                boolean isDark = (row + col) % 2 == 1;
-                String bgColor = isDark ? EscapeSequences.SET_BG_COLOR_DARK_GREY : EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
-
-                // Print an empty space on a colored square
-                System.out.print(bgColor + " " + EscapeSequences.RESET_BG_COLOR);
+        //white
+        if (perspective == ChessGame.TeamColor.WHITE) {
+            for (int i = 1; i < 9; i++) {
+                emptyBoard[0][i] = columns[i-1];
+                emptyBoard[9][i] = columns[i-1];
+                emptyBoard[i][0] = Integer.toString(i);
+                emptyBoard[i][9] = Integer.toString(i);
             }
-            System.out.println(); // Newline at end of row
+        }
+        //black
+        else {
+            for (int i = 8; i > 1; i--) {
+                emptyBoard[0][i] = columns[i-1];
+                emptyBoard[9][i] = columns[i-1];
+                emptyBoard[i][0] = Integer.toString(i);
+                emptyBoard[i][9] = Integer.toString(i);
+            }
         }
 
-        System.out.print(EscapeSequences.RESET_TEXT_COLOR + EscapeSequences.RESET_BG_COLOR);
+
+        //background
+        for (int i = 1; i < 9; i++) {
+            for (int j = 0; j < 8; j++) {
+                if ((i + j) % 2 == 0) {
+                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_WHITE;
+                }
+                else {
+                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_BLACK;
+                }
+            }
+        }
+
+        return emptyBoard;
+    }
+
+    private void printBoard(int gameID, ChessGame.TeamColor perspective) {
+        String[][] board = emptyBoard(perspective);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                System.out.print(board[i][j] + "   ");
+            }
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
+        }
     }
 }

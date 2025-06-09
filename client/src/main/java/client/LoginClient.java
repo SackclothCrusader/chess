@@ -44,11 +44,11 @@ public class LoginClient {
     private boolean register(String user, String password, String email) {
         try {
             Repl.AUTH = facade.register(user, password, email);
+            System.out.println("Your account has been created and you are logged in as " + user + ".");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
             return false;
         }
-        System.out.println("Your account has been created and you are logged in as " + user + ".");
         return false;
     }
 
