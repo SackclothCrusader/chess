@@ -26,12 +26,17 @@ public class LoginClient {
 
     public boolean help() {
         System.out.println("""
-                Please register or log in to access the main service.
+                Please register or log in to access the main service. To show this menu type help.
                
                 Commands:
+                - help
+                    Display this page.
                 - register <username> <password> <email>
+                    Create a new user and login as that user.
                 - login <username> <password>
+                    Log in as an existing user.
                 - quit
+                    End the current session and close 240 Chess client.
                """);
         return false;
     }
@@ -44,18 +49,17 @@ public class LoginClient {
             return false;
         }
         System.out.println("Your account has been created and you are logged in as " + user + ".");
-        return true;
+        return false;
     }
 
     private boolean login(String user, String password) {
         try {
             Repl.AUTH = facade.login(user, password);
+            System.out.println("You are now logged in as " + user + ".");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
-            return false;
         }
-        System.out.println("You are now logged in as " + user + ".");
-        return true;
+        return false;
     }
 
     private boolean quit() {
