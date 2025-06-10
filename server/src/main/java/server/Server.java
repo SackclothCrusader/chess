@@ -19,7 +19,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        //clear
+        //Clear
         Spark.delete("/db", (req, res) -> Handler.ClearHandler.clear(req, res));
 
         //Register
@@ -40,7 +40,11 @@ public class Server {
         //Join
         Spark.put("/game", (req, res) -> Handler.GameHandler.joinGame(req, res));
 
+        //Get Game
+        Spark.get("/play", (req, res) -> Handler.GameHandler.getGame(req, res));
 
+        //Update Game
+//        Spark.put("/play", (req, res) -> Handler.GameHandler.updateGame(req, res));
 
         //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();

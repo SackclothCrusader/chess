@@ -1,6 +1,7 @@
 package model;
 
 import chess.ChessGame;
+import chess.ChessMove;
 
 public class Request {
     public record RegisterRequest(String username, String password, String email){}
@@ -9,5 +10,7 @@ public class Request {
     public record ListGamesRequest(String authToken){}
     public record CreateGameRequest(String authToken, String gameName){}
     public record JoinGameRequest(String authToken, ChessGame.TeamColor color, int gameID){}
+    public record GetGameRequest(String authToken, int gameID){}
+    public record UpdateGameRequest(String authToken){}
     public record DeleteRequest(){}
 }

@@ -25,57 +25,62 @@ public class ServerFacade {
 
     public void clear() {
         String path = "/db";
-        makeRequest("DELETE", path, null, null, null);
+        makeRequest("DELETE", path, null, null, null, 0);
     }
 
     public String register(String username, String password, String email) throws ResponseException {
         String path = "/user";
         Request.RegisterRequest req = new Request.RegisterRequest(username, password, email);
-        Result.RegisterResult res = makeRequest("POST", path, req, Result.RegisterResult.class, null);
+        Result.RegisterResult res = makeRequest("POST", path, req, Result.RegisterResult.class,
+                null, 0);
         return res.authToken();
     }
 
     public String login(String username, String password) throws ResponseException {
         String path = "/session";
         Request.LoginRequest req = new Request.LoginRequest(username, password);
-        Result.LoginResult res = makeRequest("POST", path, req, Result.LoginResult.class, null);
+        Result.LoginResult res = makeRequest("POST", path, req, Result.LoginResult.class, null, 0);
         return res.authToken();
     }
 
     public void logout(String authToken) throws ResponseException{
         String path = "/session";
         Request.LogoutRequest req = new Request.LogoutRequest(authToken);
-        makeRequest("DELETE", path, req, Result.LogoutResult.class, authToken);
+        makeRequest("DELETE", path, req, Result.LogoutResult.class, authToken, 0);
     }
 
     public Collection<GameData> listGames(String authToken) throws ResponseException{
         String path = "/game";
         Request.ListGamesRequest req = new Request.ListGamesRequest(authToken);
-        Result.ListGamesResult games = makeRequest("GET", path, req, Result.ListGamesResult.class, authToken);
+        Result.ListGamesResult games = makeRequest("GET", path, req, Result.ListGamesResult.class, authToken,
+                0);
         return games.games();
     }
 
     public int createGame(String authToken, String gameName) {
         String path = "/game";
         Request.CreateGameRequest req = new Request.CreateGameRequest(authToken, gameName);
-        Result.CreateGameResult game = makeRequest("POST", path, req, Result.CreateGameResult.class, authToken);
+        Result.CreateGameResult game = makeRequest("POST", path, req, Result.CreateGameResult.class,
+                authToken, 0);
         return game.gameID();
     }
 
     public void joinGame(String authToken, TeamColor playerColor, int gameID) {
         String path = "/game";
         Request.JoinGameRequest req = new Request.JoinGameRequest(authToken, playerColor, gameID);
-        makeRequest("PUT", path, req, Result.JoinGameResult.class, authToken);
+        makeRequest("PUT", path, req, Result.JoinGameResult.class, authToken, 0);
     }
 
     //helper functions
-    private <T> T makeRequest(String method, String path, Object req, Class<T> resClass, String auth) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object req, Class<T> resClass, String auth, int gameID)
+            throws ResponseException {
         try {
             URL url = (new URI(this.url + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
             if (auth != null) http.setRequestProperty("authorization", auth);
+            if (gameID != 0) http.setRequestProperty("game", Integer.toString(gameID));
             if (!method.equals("GET")) {
                 writeBody(req, http);
             }

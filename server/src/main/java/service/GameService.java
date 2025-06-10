@@ -46,4 +46,8 @@ public class GameService {
         GAME_DAO.addPlayer(user.username(), request.color(), request.gameID());
         return new Result.JoinGameResult();
     }
+
+    public Result.GetGameResult getGames(Request.GetGameRequest req) {
+        return new Result.GetGameResult(GAME_DAO.getGame(req.gameID()));
+    }
 }

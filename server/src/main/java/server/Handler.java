@@ -187,6 +187,27 @@ public class Handler {
 
             return new Gson().toJson(joinGameResult);
         }
+
+        //get game [GET] /play
+        public static Object getGame(spark.Request req, spark.Response res) {
+            String authToken = req.headers("authorization");
+            int gameID = Integer.parseInt(req.headers("game"));
+
+            try {
+                if (!authenticate(authToken)) {
+                    res.status(401);
+                    return GSON.toJson(new UnauthorizedException("Error: unauthorized"));
+                }
+            } catch (DataAccessException e) {
+                res.status(500);
+                return GSON.toJson(e);
+            }
+
+            Request.GetGameRequest getGameRequest = new Request.GetGameRequest(authToken, gameID);
+            Result.GetGameResult GetGamesResult = new GameService().getGames(getGameRequest);
+
+            return new Gson().toJson(GetGamesResult);
+        }
     }
 
     public static class ClearHandler extends Handler {

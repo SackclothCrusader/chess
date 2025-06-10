@@ -9,5 +9,7 @@ public class Result {
     public record ListGamesResult(HashSet<GameData> games){}
     public record CreateGameResult(int gameID){}
     public record JoinGameResult(){}
+    public record GetGameResult(GameData game){}
+    public record UpdateGameResult(){}
     public record DeleteResult(){}
 }
