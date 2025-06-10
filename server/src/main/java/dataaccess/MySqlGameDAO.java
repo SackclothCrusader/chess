@@ -42,15 +42,16 @@ public class MySqlGameDAO implements GameDAO{
 
                 try (var rs = stmt.executeQuery()) {
                     rs.next();
-                    var gameName = rs.getString("gameName");
-                    var whiteUsername = rs.getString("whitePlayer");
-                    var blackUsername = rs.getString("blackPlayer");
-                    var game = gameFromJson(rs.getString("game"));
+                        var gameName = rs.getString("gameName");
+                        var whiteUsername = rs.getString("whitePlayer");
+                        var blackUsername = rs.getString("blackPlayer");
+                        var game = gameFromJson(rs.getString("game"));
 
-                    return new GameData(gameID, gameName, whiteUsername, blackUsername, game);
+                        return new GameData(gameID, gameName, whiteUsername, blackUsername, game);
                 }
             }
         } catch (Exception e) {
+            System.out.println("dao issue");
             return null;
         }
     }

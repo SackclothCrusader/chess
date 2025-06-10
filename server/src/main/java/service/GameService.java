@@ -47,7 +47,9 @@ public class GameService {
         return new Result.JoinGameResult();
     }
 
-    public Result.GetGameResult getGames(Request.GetGameRequest req) {
-        return new Result.GetGameResult(GAME_DAO.getGame(req.gameID()));
+    public Result.GetGameResult getGame(Request.GetGameRequest req) {
+        Result.GetGameResult res = new Result.GetGameResult(GAME_DAO.getGame(req.gameID()));
+        System.out.println(res);
+        return res;
     }
 }

@@ -57,6 +57,22 @@ public class ServerFacade {
         return games.games();
     }
 
+    public GameData getGame(String authToken, int gameID) throws ResponseException{
+        String path = "/game";
+        Request.GetGameRequest req = new Request.GetGameRequest(authToken, gameID);
+        Result.GetGameResult game = makeRequest("GET", path, req, Result.GetGameResult.class, authToken, gameID);
+        if (game == null) {
+            System.out.println("makeRequest returned null.");
+            return null;
+        }
+        System.out.println(game);
+        if (game.game() == null) {
+            System.out.println("getGameResult.game() is null.");
+            return null;
+        }
+        return game.game();
+    }
+
     public int createGame(String authToken, String gameName) {
         String path = "/game";
         Request.CreateGameRequest req = new Request.CreateGameRequest(authToken, gameName);

@@ -1,6 +1,10 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+import model.GameData;
 import ui.EscapeSequences;
 
 public class GameClient {
@@ -52,7 +56,7 @@ public class GameClient {
 
     private String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
-        String columns[] = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        String columns[] = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
         String border = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
 
         emptyBoard[0][0] = border + " ";
@@ -94,32 +98,60 @@ public class GameClient {
         return emptyBoard;
     }
 
-    private String[][] fillBoard(String[][] board, int gameID) {
-        return board;
-    }
-
     private void printBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
+        ChessBoard game = getGame(Repl.AUTH, gameID).game().getBoard();
 
-
-        // Loop through all rows
-        for (int i = 0; i < board.length; i++) {
-            // Loop through columns in the current row
-            for (int j = 0; j < board[i].length; j++) {
-                String cell = board[i][j];
-
-                // If cell is null, print empty 3 spaces
-                if (cell == null) {
-                    System.out.print("   ");
-                } else {
-                    // Print the cell content
-                    System.out.print(cell);
+        if(perspective == ChessGame.TeamColor.WHITE) {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[i].length; j++) {
+                    ChessPiece piece = game.getPiece(new ChessPosition(i+1, j+1));
+                    System.out.print(board[i][j] + pieceToString(piece));
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
                 }
-
-                // Reset colors after each cell to avoid color bleeding
-                System.out.print(EscapeSequences.RESET_BG_COLOR);
+                System.out.println();
             }
-            System.out.println(); // New line at end of row
+        }
+        else {
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board[i].length; j++) {
+                    ChessPiece piece = game.getPiece(new ChessPosition(8-i+1, 8-j+1));
+                    System.out.print(board[i][j] + pieceToString(piece));
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    private GameData getGame(String authToken, int gameID) {
+        return facade.getGame(authToken, gameID);
+    }
+
+    private String pieceToString (ChessPiece piece) {
+        if (piece == null) {
+            return "   ";
+        }
+
+        if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            return switch (piece.getPieceType()) {
+                case PAWN -> EscapeSequences.WHITE_PAWN;
+                case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
+                case BISHOP -> EscapeSequences.WHITE_BISHOP;
+                case ROOK -> EscapeSequences.WHITE_ROOK;
+                case KING -> EscapeSequences.WHITE_KING;
+                case QUEEN -> EscapeSequences.WHITE_QUEEN;
+            };
+        }
+        else {
+            return switch (piece.getPieceType()) {
+                case PAWN -> EscapeSequences.BLACK_PAWN;
+                case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
+                case BISHOP -> EscapeSequences.BLACK_BISHOP;
+                case ROOK -> EscapeSequences.BLACK_ROOK;
+                case KING -> EscapeSequences.BLACK_KING;
+                case QUEEN -> EscapeSequences.BLACK_QUEEN;
+            };
         }
     }
 }
