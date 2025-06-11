@@ -56,41 +56,42 @@ public class GameClient {
 
     private String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
-        String columns[] = {" a ", " b ", " c ", " d ", " e ", " f ", " g ", " h "};
-        String border = EscapeSequences.SET_BG_COLOR_LIGHT_GREY;
+        String columns[] = {"\u2003a|", "\u2003b|", "\u2003c|", "\u2003d|", "\u2003e|", "\u2003f|", "\u2003g|" , "\u2003h "};
+        String border = EscapeSequences.SET_BG_COLOR_BLACK;
 
-        emptyBoard[0][0] = border + " ";
-        emptyBoard[9][9] = border + " ";
-        emptyBoard[0][9] = border + " ";
-        emptyBoard[9][0] = border + " ";
+        //empty corners
+        emptyBoard[0][0] = border + "   ";
+        emptyBoard[9][9] = border + "   ";
+        emptyBoard[0][9] = border + "   ";
+        emptyBoard[9][0] = border + "   ";
 
         //white
         if (perspective == ChessGame.TeamColor.WHITE) {
             for (int i = 1; i <= 8; i++) {
-                emptyBoard[0][i] = border + columns[i-1];
-                emptyBoard[9][i] = border + columns[i-1];
-                emptyBoard[i][0] = border + Integer.toString(9-i);
-                emptyBoard[i][9] = border + Integer.toString(9-i);
+                emptyBoard[0][i] = border + columns[i - 1];
+                emptyBoard[9][i] = border + columns[i - 1];
+                emptyBoard[i][0] = border + " " + Integer.toString(9 - i) + " ";
+                emptyBoard[i][9] = border + " " + Integer.toString(9 - i) + " ";
             }
         }
         //black
         else {
             for (int i = 1; i <= 8; i++) {
-                emptyBoard[0][i] = border + columns[8-i];
-                emptyBoard[9][i] = border + columns[8-i];
-                emptyBoard[i][0] = border + Integer.toString(i);
-                emptyBoard[i][9] = border + Integer.toString(i);
+                emptyBoard[0][i] = border + columns[8 - i];
+                emptyBoard[9][i] = border + columns[8 - i];
+                emptyBoard[i][0] = border + " " + Integer.toString(i) + " ";
+                emptyBoard[i][9] = border + " " + Integer.toString(i) + " ";
             }
         }
 
-        //background
+        //board background
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 if ((i + j) % 2 == 0) {
-                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_WHITE;
+                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_GREEN;
                 }
                 else {
-                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_BLACK;
+                    emptyBoard[i][j] = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
                 }
             }
         }
@@ -103,24 +104,27 @@ public class GameClient {
         ChessBoard game = getGame(Repl.AUTH, gameID).game().getBoard();
 
         if(perspective == ChessGame.TeamColor.WHITE) {
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board[i].length; j++) {
-                    ChessPiece piece = game.getPiece(new ChessPosition(i+1, j+1));
-                    System.out.print(board[i][j] + pieceToString(piece));
-                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPiece piece = game.getPiece(new ChessPosition(i, j));
+                    board[i][j] += pieceToString(piece);
                 }
-                System.out.println();
             }
         }
         else {
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board[i].length; j++) {
-                    ChessPiece piece = game.getPiece(new ChessPosition(8-i+1, 8-j+1));
-                    System.out.print(board[i][j] + pieceToString(piece));
-                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+            for (int i = 1; i <= 8; i++) {
+                for (int j = 1; j <= 8; j++) {
+                    ChessPiece piece = game.getPiece(new ChessPosition(i, j));
+                    board[9-i][9-j] += pieceToString(piece);
                 }
-                System.out.println();
             }
+        }
+
+        for (int i = 0; i < 10; i++) {
+            for (int j =0; j < 10; j++) {
+                System.out.print(String.format("%-3s", board[i][j]) + EscapeSequences.RESET_TEXT_COLOR);
+            }
+            System.out.println(EscapeSequences.RESET_BG_COLOR);
         }
     }
 
@@ -130,27 +134,27 @@ public class GameClient {
 
     private String pieceToString (ChessPiece piece) {
         if (piece == null) {
-            return "   ";
+            return EscapeSequences.EMPTY;
         }
 
         if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             return switch (piece.getPieceType()) {
-                case PAWN -> EscapeSequences.WHITE_PAWN;
-                case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
-                case BISHOP -> EscapeSequences.WHITE_BISHOP;
-                case ROOK -> EscapeSequences.WHITE_ROOK;
-                case KING -> EscapeSequences.WHITE_KING;
-                case QUEEN -> EscapeSequences.WHITE_QUEEN;
+                case PAWN -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_PAWN;
+                case KNIGHT -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_KNIGHT;
+                case BISHOP -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_BISHOP;
+                case ROOK -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_ROOK;
+                case KING -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_KING;
+                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_QUEEN;
             };
         }
         else {
             return switch (piece.getPieceType()) {
-                case PAWN -> EscapeSequences.BLACK_PAWN;
-                case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
-                case BISHOP -> EscapeSequences.BLACK_BISHOP;
-                case ROOK -> EscapeSequences.BLACK_ROOK;
-                case KING -> EscapeSequences.BLACK_KING;
-                case QUEEN -> EscapeSequences.BLACK_QUEEN;
+                case PAWN -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_PAWN;
+                case KNIGHT -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_KNIGHT;
+                case BISHOP -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_BISHOP;
+                case ROOK -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_ROOK;
+                case KING -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_KING;
+                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_QUEEN;
             };
         }
     }
