@@ -8,13 +8,15 @@ import exceptions.ResponseException;
 public class ServerFacadeTests {
 
     private static Server server;
-    private static final String URL = "http://localhost:8080";
-    private final ServerFacade facade = new ServerFacade(URL);
+    private static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        var port = server.run(0);
+        String url = "http://localhost:" + port;
+        facade = new ServerFacade(url);
+
         System.out.println("Started test HTTP server on " + port);
     }
 
