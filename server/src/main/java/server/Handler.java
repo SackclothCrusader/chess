@@ -204,7 +204,7 @@ public class Handler {
             }
 
             Request.GetGameRequest getGameRequest = new Request.GetGameRequest(authToken, gameID);
-            Result.GetGameResult getGameResultetGameResult = new GameService().getGame(getGameRequest);
+            Result.GetGameResult getGameResult = new GameService().getGame(getGameRequest);
             System.out.println(new Gson().toJson(getGameResult));
             return new Gson().toJson(getGameResult);
         }
