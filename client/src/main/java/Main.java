@@ -11,4 +11,8 @@ public class Main {
         Repl repl = new Repl(URL);
         repl.run();
     }
+
+    // change list games
+    // way to leave gameplay loop
+    // observe game prints board
 }

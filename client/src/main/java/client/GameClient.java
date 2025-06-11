@@ -106,7 +106,7 @@ public class GameClient {
             for (int i = 1; i <= 8; i++) {
                 for (int j = 1; j <= 8; j++) {
                     ChessPiece piece = game.getPiece(new ChessPosition(i, j));
-                    board[i][j] += pieceToString(piece);
+                    board[9-i][9-j] += pieceToString(piece);
                 }
             }
         }
@@ -114,7 +114,7 @@ public class GameClient {
             for (int i = 1; i <= 8; i++) {
                 for (int j = 1; j <= 8; j++) {
                     ChessPiece piece = game.getPiece(new ChessPosition(i, j));
-                    board[9-i][9-j] += pieceToString(piece);
+                    board[i][j] += pieceToString(piece);
                 }
             }
         }
