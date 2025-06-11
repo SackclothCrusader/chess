@@ -60,15 +60,6 @@ public class ServerFacade {
         String path = "/play/" + gameID;
         Request.GetGameRequest req = new Request.GetGameRequest(authToken, gameID);
         Result.GetGameResult game = makeRequest("GET", path, req, Result.GetGameResult.class, authToken);
-        if (game == null) {
-            System.out.println("makeRequest returned null.");
-            return null;
-        }
-        System.out.println(game);
-        if (game.game() == null) {
-            System.out.println("getGameResult.game() is null.");
-            return null;
-        }
         return game.game();
     }
 
@@ -90,7 +81,6 @@ public class ServerFacade {
     private <T> T makeRequest(String method, String path, Object req, Class<T> resClass, String auth)
             throws ResponseException {
         try {
-            System.out.println(method);
             URL url = (new URI(this.url + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
@@ -114,7 +104,6 @@ public class ServerFacade {
             String reqData = new Gson().toJson(req);
             try(OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
-                System.out.println(reqData);
             }
         }
     }
@@ -135,7 +124,6 @@ public class ServerFacade {
     private void throwOnFail(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if(!(status/100 == 2)) {
-            System.out.println(status);
             throw new ResponseException(status, "Error");
         }
     }
