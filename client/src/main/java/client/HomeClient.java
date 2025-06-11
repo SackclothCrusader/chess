@@ -29,8 +29,7 @@ public class HomeClient {
                 default -> help();
             };
         } catch (Exception e) {
-            throw new RuntimeException(e);
-//            return help();
+            return help();
         }
     }
 
