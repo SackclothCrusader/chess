@@ -41,7 +41,7 @@ public class Server {
         Spark.put("/game", (req, res) -> Handler.GameHandler.joinGame(req, res));
 
         //Get Game
-        Spark.get("/play", (req, res) -> Handler.GameHandler.getGame(req, res));
+        Spark.get("/play/:gameID", (req, res) -> Handler.GameHandler.getGame(req, res));
 
         //Update Game
 //        Spark.put("/play", (req, res) -> Handler.GameHandler.updateGame(req, res));

@@ -3,7 +3,9 @@ package dataaccess;
 import exceptions.DataAccessException;
 import chess.ChessGame;
 import model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.GameService;
 
 public class SqlTests {
     private MySqlUserDAO userDAO = new MySqlUserDAO();
@@ -11,7 +13,7 @@ public class SqlTests {
     private MySqlAuthDAO authDAO = new MySqlAuthDAO();
     private MySqlGameDAO gameDAO = new MySqlGameDAO();
 
-    @Test
+    @BeforeEach
     public void clearTest() throws DataAccessException {
         try {
             clearDAO.clear();
@@ -144,11 +146,24 @@ public class SqlTests {
         System.out.println(gameDAO.getGame(game.gameID()));
     }
     @Test
-    public void test1 (){}
+    public void getGameTest () throws DataAccessException{
+        GameData game = gameDAO.createGame("newGame");
+        System.out.println(gameDAO.getGame(game.gameID()));
+    }
+
     @Test
-    public void test2 (){}
+    public void getGameServiceTest() throws DataAccessException{
+        GameData game = gameDAO.createGame("newGame");
+        UserData user = userDAO.createUser("a", "a", "A");
+        AuthData login = authDAO.createAuthData(user);
+        System.out.println(new GameService().getGame(new Request.GetGameRequest(login.authToken(), game.gameID())));
+    }
+
     @Test
-    public void test3 (){}
+    public void test3 () throws DataAccessException{
+
+    }
+
     @Test
     public void test4 (){}
     @Test

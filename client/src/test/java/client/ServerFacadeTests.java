@@ -131,4 +131,21 @@ public class ServerFacadeTests {
         Assertions.assertDoesNotThrow(()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
         Assertions.assertThrows(ResponseException.class, ()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
     }
+
+    @Test
+    public void posGetGameTest() {
+        String token = facade.register("user", "password", "email");
+        final int gameID = facade.createGame(token, "Game_1");
+        System.out.println(facade.getGame(token, gameID));
+        Assertions.assertDoesNotThrow(()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
+        Assertions.assertThrows(ResponseException.class, ()->{facade.joinGame(token, ChessGame.TeamColor.WHITE, gameID);});
+    }
+
+    @Test
+    public void negGetGameTest() {
+        String token = facade.register("user", "password", "email");
+        final int gameID = facade.createGame(token, "Game_1");
+        System.out.println(facade.listGames(token));
+        Assertions.assertThrows(ResponseException.class, ()->{facade.getGame("bad token", gameID);});
+    }
 }

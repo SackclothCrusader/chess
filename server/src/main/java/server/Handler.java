@@ -191,7 +191,7 @@ public class Handler {
         //get game [GET] /play
         public static Object getGame(spark.Request req, spark.Response res) {
             String authToken = req.headers("authorization");
-            int gameID = Integer.parseInt(req.headers("game"));
+            int gameID = Integer.parseInt(req.params(":gameID"));
 
             try {
                 if (!authenticate(authToken)) {

@@ -98,7 +98,7 @@ public class GameClient {
         return emptyBoard;
     }
 
-    private void printBoard(int gameID, ChessGame.TeamColor perspective) {
+    public void printBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
         ChessBoard game = getGame(Repl.AUTH, gameID).game().getBoard();
 
