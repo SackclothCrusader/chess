@@ -23,7 +23,7 @@ public class GameClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "";
         try {
             return switch (cmd) {
-                case "register" -> throw new RuntimeException();
+                case "quit" -> quit();
                 default -> help();
             };
         } catch (Exception e) {
@@ -38,22 +38,21 @@ public class GameClient {
                 Commands:
                 - help
                     Display this page.
-                - logout
-                    Logout current user and return to login.
-                - create game
-                    Creates a new game. Note that you must join the game manually.
-                - list games
-                    Lists all games in the database.
-                - play game <gameID> <BLACK/WHITE>
-                    Allows the user to join a game as black or white and play.
-                - observe game <gameID>
-                    Spectate a game.
                 - quit
                     End the current session and close 240 Chess client.
                """);
         return false;
     }
 
+    private boolean quit() {
+        facade.logout(Repl.AUTH);
+        System.out.println("Goodbye :)");
+        return true;
+    }
+
+
+
+    //Printing Board things
     private String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
         String columns[] = {"\u2003a|", "\u2003b|", "\u2003c|", "\u2003d|", "\u2003e|", "\u2003f|", "\u2003g|" , "\u2003h "};

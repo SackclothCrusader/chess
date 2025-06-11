@@ -31,7 +31,7 @@ public class GameService {
 
     //join game
     public Result.JoinGameResult joinGame(Request.JoinGameRequest request) throws AlreadyTakenException, BadRequestException, DataAccessException {
-        if (request == null  || request.color() == null || request.authToken() == null) {
+        if (request == null  || request.playerColor() == null || request.authToken() == null) {
             throw new BadRequestException("Error: bad request");
         }
         GameData game = GAME_DAO.getGame(request.gameID());
@@ -39,11 +39,11 @@ public class GameService {
         if (game == null || user == null) {
             throw new BadRequestException("Error: bad request");
         }
-        if (request.color() == ChessGame.TeamColor.WHITE && game.whiteUsername() != null
-        || request.color() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
+        if (request.playerColor() == ChessGame.TeamColor.WHITE && game.whiteUsername() != null
+        || request.playerColor() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        GAME_DAO.addPlayer(user.username(), request.color(), request.gameID());
+        GAME_DAO.addPlayer(user.username(), request.playerColor(), request.gameID());
         return new Result.JoinGameResult();
     }
 

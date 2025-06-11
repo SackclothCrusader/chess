@@ -90,6 +90,7 @@ public class ServerFacade {
     private <T> T makeRequest(String method, String path, Object req, Class<T> resClass, String auth)
             throws ResponseException {
         try {
+            System.out.println(method);
             URL url = (new URI(this.url + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
@@ -113,6 +114,7 @@ public class ServerFacade {
             String reqData = new Gson().toJson(req);
             try(OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
+                System.out.println(reqData);
             }
         }
     }
@@ -133,6 +135,7 @@ public class ServerFacade {
     private void throwOnFail(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if(!(status/100 == 2)) {
+            System.out.println(status);
             throw new ResponseException(status, "Error");
         }
     }

@@ -29,7 +29,8 @@ public class HomeClient {
                 default -> help();
             };
         } catch (Exception e) {
-            return help();
+            throw new RuntimeException(e);
+//            return help();
         }
     }
 
@@ -75,14 +76,14 @@ public class HomeClient {
         return false;
     }
 
-    private boolean join(int gameID, String playerColor){
-        ChessGame.TeamColor color;
+    private boolean join(int gameID, String color){
+        ChessGame.TeamColor playerColor;
 
-        if (playerColor.equals("white") || playerColor.equals("w")) {
-            color = ChessGame.TeamColor.WHITE;
+        if (color.equals("white") || color.equals("w")) {
+            playerColor = ChessGame.TeamColor.WHITE;
         }
-        else if (playerColor.equals("black") || playerColor.equals("b")) {
-            color = ChessGame.TeamColor.BLACK;
+        else if (color.equals("black") || color.equals("b")) {
+            playerColor = ChessGame.TeamColor.BLACK;
         }
         else {
             System.out.println("Invalid color.");
@@ -90,11 +91,12 @@ public class HomeClient {
         }
 
         try {
-            facade.joinGame(Repl.AUTH, color, gameID);
+            facade.joinGame(Repl.AUTH, playerColor, gameID);
             Repl.GAME_ID = gameID;
             System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
+            throw new RuntimeException(e);
         }
         return false;
     }

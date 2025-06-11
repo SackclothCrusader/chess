@@ -9,7 +9,7 @@ public class Request {
     public record LogoutRequest(String authToken){}
     public record ListGamesRequest(String authToken){}
     public record CreateGameRequest(String authToken, String gameName){}
-    public record JoinGameRequest(String authToken, ChessGame.TeamColor color, int gameID){}
+    public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, int gameID){}
     public record GetGameRequest(String authToken, int gameID){}
     public record UpdateGameRequest(String authToken){}
     public record DeleteRequest(){}

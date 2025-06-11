@@ -152,19 +152,19 @@ public class Handler {
                 return GSON.toJson(e);
             }
 
-            var tmp = JsonParser.parseString(req.body()).getAsJsonObject().get("color");
-            if (tmp == null) {
+            var tmp = JsonParser.parseString(req.body()).getAsJsonObject();
+            if (tmp.get("playerColor") == null) {
                 res.status(400);
                 return GSON.toJson(new BadRequestException("Error: bad request"));
             }
-            String colorCheck = tmp.getAsString();
+            String colorCheck = tmp.get("playerColor").getAsString();
             if (!(colorCheck.equals("WHITE") || colorCheck.equals("BLACK"))) {
                 res.status(400);
                 return GSON.toJson(new BadRequestException("Error: bad request"));
             }
 
             ChessGame.TeamColor color = ChessGame.TeamColor.valueOf(colorCheck);
-            var gameID = JsonParser.parseString(req.body()).getAsJsonObject().get("gameID");
+            var gameID = tmp.get("gameID");
             if (gameID == null) {
                 res.status(400);
                 return GSON.toJson(new BadRequestException("Error: bad request"));
