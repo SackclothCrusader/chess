@@ -14,14 +14,23 @@ public class LoginClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "";
         try {
             return switch (cmd) {
+                case "help" -> help();
                 case "register" -> register(tokens[1], tokens[2], tokens[3]);
                 case "login" -> login(tokens[1], tokens[2]);
                 case "quit" -> quit();
-                default -> help();
+                default -> {
+                    System.out.println("Unknown command. Type help to open the help menu.");
+                    yield false;
+                }
             };
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Incorrect number of arguments for " + cmd + "\nType help to open the help menu.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Incorrect argument type for " + cmd + "\nType help to open the help menu.");
         } catch (Exception e) {
-            return help();
+            System.out.println("There was an error with command " + cmd + "\nType help to open the help menu.");
         }
+        return false;
     }
 
     public boolean help() {
@@ -47,7 +56,6 @@ public class LoginClient {
             System.out.println("Your account has been created and you are logged in as " + user + ".");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
-            return false;
         }
         return false;
     }

@@ -8,7 +8,7 @@ import model.GameData;
 import ui.EscapeSequences;
 
 public class GameClient {
-    private ServerFacade facade;
+    private static ServerFacade facade;
     GameClient(String url) {
         facade = new ServerFacade(url);
     }
@@ -23,12 +23,22 @@ public class GameClient {
         var cmd = (tokens.length > 0) ? tokens[0] : "";
         try {
             return switch (cmd) {
+                case "help" -> help();
+                case "exit" -> exit();
                 case "quit" -> quit();
-                default -> help();
+                default -> {
+                    System.out.println("Unknown command. Type help to open the help menu.");
+                    yield false;
+                }
             };
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Incorrect number of arguments for " + cmd + "\nType help to open the help menu.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Incorrect argument type for " + cmd + "\nType help to open the help menu.");
         } catch (Exception e) {
-            return help();
+            System.out.println("There was an error with command " + cmd + "\nType help to open the help menu.");
         }
+        return false;
     }
 
     public boolean help() {
@@ -38,9 +48,17 @@ public class GameClient {
                 Commands:
                 - help
                     Display this page.
+                -exit
+                    Return to client home.
                 - quit
                     End the current session and close 240 Chess client.
                """);
+        return false;
+    }
+
+    private boolean exit() {
+        Repl.gameID = 0;
+        System.out.println("Returning to home.");
         return false;
     }
 
@@ -53,7 +71,7 @@ public class GameClient {
 
 
     //Printing Board things
-    private String[][] emptyBoard(ChessGame.TeamColor perspective) {
+    private static String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
         String columns[] = {"\u2003a|", "\u2003b|", "\u2003c|", "\u2003d|", "\u2003e|", "\u2003f|", "\u2003g|" , "\u2003h "};
         String border = EscapeSequences.SET_BG_COLOR_BLACK;
@@ -98,7 +116,7 @@ public class GameClient {
         return emptyBoard;
     }
 
-    public void printBoard(int gameID, ChessGame.TeamColor perspective) {
+    public static void printBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
         ChessBoard game = getGame(Repl.auth, gameID).game().getBoard();
 
@@ -127,11 +145,11 @@ public class GameClient {
         }
     }
 
-    private GameData getGame(String authToken, int gameID) {
+    private static GameData getGame(String authToken, int gameID) {
         return facade.getGame(authToken, gameID);
     }
 
-    private String pieceToString (ChessPiece piece) {
+    private static String pieceToString (ChessPiece piece) {
         if (piece == null) {
             return EscapeSequences.EMPTY;
         }

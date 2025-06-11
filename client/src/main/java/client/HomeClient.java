@@ -20,17 +20,26 @@ public class HomeClient {
 
         try {
             return switch (cmd) {
+                case "help" -> help();
                 case "logout" -> logout();
                 case "create game" -> create(tokens[2]);
                 case "list games" -> list();
                 case "play game" -> join(Integer.parseInt(tokens[2]), tokens[3]);
                 case "observe game" -> observe(Integer.parseInt(tokens[2]));
                 case "quit" -> quit();
-                default -> help();
+                default -> {
+                    System.out.println("Unknown command. Type help to open the help menu.");
+                    yield false;
+                }
             };
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Incorrect number of arguments for " + cmd + "\nType help to open the help menu.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Incorrect argument type for " + cmd + "\nType help to open the help menu.");
         } catch (Exception e) {
-            return help();
+            System.out.println("There was an error with command " + cmd + "\nType help to open the help menu.");
         }
+        return false;
     }
 
     private boolean quit() {
@@ -66,7 +75,7 @@ public class HomeClient {
             games = facade.listGames(Repl.auth);
             System.out.println("Games:");
             for (GameData game : games) {
-                System.out.println(game); // relies on your custom toString()
+                System.out.println(game);
             }
 
         } catch (ResponseException e) {
@@ -101,6 +110,8 @@ public class HomeClient {
     }
 
     private boolean observe(int gameID){
+        GameClient.printBoard(gameID, ChessGame.TeamColor.WHITE);
+        GameClient.printBoard(gameID, ChessGame.TeamColor.WHITE);
         return false;
     }
 

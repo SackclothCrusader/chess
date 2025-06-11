@@ -13,6 +13,4 @@ public class Main {
     }
 
     // change list games
-    // way to leave gameplay loop
-    // observe game prints board
 }
