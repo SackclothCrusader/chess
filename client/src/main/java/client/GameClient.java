@@ -15,9 +15,9 @@ public class GameClient {
 
     public boolean eval(String in) {
         System.out.println("Printing black:");
-        printBoard(Repl.GAME_ID, ChessGame.TeamColor.BLACK);
+        printBoard(Repl.gameID, ChessGame.TeamColor.BLACK);
         System.out.println("Printing white:");
-        printBoard(Repl.GAME_ID, ChessGame.TeamColor.WHITE);
+        printBoard(Repl.gameID, ChessGame.TeamColor.WHITE);
 
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
@@ -45,7 +45,7 @@ public class GameClient {
     }
 
     private boolean quit() {
-        facade.logout(Repl.AUTH);
+        facade.logout(Repl.auth);
         System.out.println("Goodbye :)");
         return true;
     }
@@ -100,7 +100,7 @@ public class GameClient {
 
     public void printBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
-        ChessBoard game = getGame(Repl.AUTH, gameID).game().getBoard();
+        ChessBoard game = getGame(Repl.auth, gameID).game().getBoard();
 
         if(perspective == ChessGame.TeamColor.WHITE) {
             for (int i = 1; i <= 8; i++) {

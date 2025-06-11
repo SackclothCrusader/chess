@@ -43,7 +43,7 @@ public class LoginClient {
 
     private boolean register(String user, String password, String email) {
         try {
-            Repl.AUTH = facade.register(user, password, email);
+            Repl.auth = facade.register(user, password, email);
             System.out.println("Your account has been created and you are logged in as " + user + ".");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
@@ -54,7 +54,7 @@ public class LoginClient {
 
     private boolean login(String user, String password) {
         try {
-            Repl.AUTH = facade.login(user, password);
+            Repl.auth = facade.login(user, password);
             System.out.println("You are now logged in as " + user + ".");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");

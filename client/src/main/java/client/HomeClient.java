@@ -35,15 +35,15 @@ public class HomeClient {
     }
 
     private boolean quit() {
-        facade.logout(Repl.AUTH);
+        facade.logout(Repl.auth);
         System.out.println("Goodbye :)");
         return true;
     }
 
     private boolean logout(){
         try {
-            facade.logout(Repl.AUTH);
-            Repl.AUTH = "";
+            facade.logout(Repl.auth);
+            Repl.auth = "";
             System.out.println("You have been logged out.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
@@ -53,7 +53,7 @@ public class HomeClient {
 
     private boolean create(String name){
         try {
-            facade.createGame(Repl.AUTH, name);
+            facade.createGame(Repl.auth, name);
             System.out.println("Game " + name + " has been created.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
@@ -64,7 +64,7 @@ public class HomeClient {
     private boolean list(){
         Collection<GameData> games = null;
         try {
-            games = facade.listGames(Repl.AUTH);
+            games = facade.listGames(Repl.auth);
             System.out.println("Games:");
             for (GameData game : games) {
                 System.out.println(game); // relies on your custom toString()
@@ -91,8 +91,8 @@ public class HomeClient {
         }
 
         try {
-            facade.joinGame(Repl.AUTH, playerColor, gameID);
-            Repl.GAME_ID = gameID;
+            facade.joinGame(Repl.auth, playerColor, gameID);
+            Repl.gameID = gameID;
             System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");

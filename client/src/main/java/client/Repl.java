@@ -3,15 +3,15 @@ package client;
 import java.util.Scanner;
 
 public class Repl {
-    protected static String AUTH;
-    protected static int GAME_ID;
+    protected static String auth;
+    protected static int gameID;
     private final LoginClient loginClient;
     private final HomeClient homeClient;
     private final GameClient gameClient;
 
     public Repl(String url) {
-        AUTH = "";
-        GAME_ID = 0;
+        auth = "";
+        gameID = 0;
         loginClient = new LoginClient(url);
         homeClient = new HomeClient(url);
         gameClient = new GameClient(url);
@@ -26,13 +26,13 @@ public class Repl {
             System.out.print("> ");
             String line = scanner.nextLine();
 
-            if(AUTH.isEmpty()) {
+            if(auth.isEmpty()) {
                 quit = loginClient.eval(line);
             }
-            else if(GAME_ID <= 0) {
+            else if(gameID <= 0) {
                 quit = homeClient.eval(line);
             }
-            else if(GAME_ID > 0) {
+            else if(gameID > 0) {
                 quit = gameClient.eval(line);
             }
         }

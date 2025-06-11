@@ -95,7 +95,7 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-            if (auth != null) http.setRequestProperty("authorization", auth);
+            if (auth != null) {http.setRequestProperty("authorization", auth);}
             if (!method.equals("GET")) {
                 writeBody(req, http);
             }
