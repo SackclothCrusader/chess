@@ -119,6 +119,7 @@ public class HomeClient {
         try {
             Repl.gameID = game.gameID();
             facade.joinGame(Repl.auth, playerColor, Repl.gameID);
+            Repl.teamcolor = playerColor;
             System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
@@ -128,8 +129,6 @@ public class HomeClient {
     }
 
     private boolean observe(int gameID){
-        GameClient.printBoard(gameID, ChessGame.TeamColor.WHITE);
-        GameClient.printBoard(gameID, ChessGame.TeamColor.WHITE);
         return false;
     }
 

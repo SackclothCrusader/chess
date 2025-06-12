@@ -9,6 +9,7 @@ import ui.EscapeSequences;
 
 public class GameClient {
     private static ServerFacade facade;
+
     GameClient(String url) {
         facade = new ServerFacade(url);
     }
@@ -22,15 +23,16 @@ public class GameClient {
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
         try {
-            return switch (cmd) {
+            switch (cmd) {
                 case "help" -> help();
-                case "exit" -> exit();
-                case "quit" -> quit();
-                default -> {
-                    System.out.println("Unknown command. Type help to open the help menu.");
-                    yield false;
-                }
+                case "redraw chess board" -> redraw();
+                case "leave" -> exit();
+                case "make move" -> move(tokens[2], tokens[3]);
+                case "resign" -> resign();
+                case "highlight legal moves" -> legal(tokens[3]);
+                default -> System.out.println("Unknown command. Type help to open the help menu.");
             };
+            return false;
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Incorrect number of arguments for " + cmd + "\nType help to open the help menu.");
         } catch (IllegalArgumentException e) {
@@ -41,7 +43,7 @@ public class GameClient {
         return false;
     }
 
-    public boolean help() {
+    public void help() {
         System.out.println("""
                 Welcome to the game menu! To show this menu type help.
                
@@ -53,24 +55,36 @@ public class GameClient {
                 - quit
                     End the current session and close 240 Chess client.
                """);
-        return false;
     }
 
-    private boolean exit() {
+    private void redraw() {
+        printBoard(Repl.gameID, Repl.teamcolor);
+    }
+
+    private void exit() {
         Repl.gameID = 0;
         System.out.println("Returning to home.");
-        return false;
     }
 
-    private boolean quit() {
-        facade.logout(Repl.auth);
-        System.out.println("Goodbye :)");
-        return true;
+    private void move(String startPos, String endPos) {
+
+    }
+
+    private void resign() {
+
+    }
+
+    private void legal(String pieceLocation) {
+
     }
 
 
+    public static GameData getGame(String authToken, int gameID) {
+        return facade.getGame(authToken, gameID);
+    }
 
     //Printing Board things
+
     private static String[][] emptyBoard(ChessGame.TeamColor perspective) {
         String emptyBoard[][] = new String[10][10];
         String columns[] = {"\u2003a|", "\u2003b|", "\u2003c|", "\u2003d|", "\u2003e|", "\u2003f|", "\u2003g|" , "\u2003h "};
@@ -112,11 +126,10 @@ public class GameClient {
                 }
             }
         }
-
         return emptyBoard;
     }
 
-    public static void printBoard(int gameID, ChessGame.TeamColor perspective) {
+    private static String[][] fillBoard(int gameID, ChessGame.TeamColor perspective) {
         String[][] board = emptyBoard(perspective);
         ChessBoard game = getGame(Repl.auth, gameID).game().getBoard();
 
@@ -137,6 +150,12 @@ public class GameClient {
             }
         }
 
+        return board;
+    }
+
+    private static void printBoard(int gameID, ChessGame.TeamColor perspective) {
+        String[][] board = fillBoard(gameID, perspective);
+
         for (int i = 0; i < 10; i++) {
             for (int j =0; j < 10; j++) {
                 System.out.print(String.format("%-3s", board[i][j]) + EscapeSequences.RESET_TEXT_COLOR);
@@ -145,9 +164,7 @@ public class GameClient {
         }
     }
 
-    public static GameData getGame(String authToken, int gameID) {
-        return facade.getGame(authToken, gameID);
-    }
+
 
     private static String pieceToString (ChessPiece piece) {
         if (piece == null) {

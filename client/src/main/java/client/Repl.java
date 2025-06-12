@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import model.GameData;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -7,6 +8,7 @@ import java.util.Scanner;
 public class Repl {
     protected static String auth;
     protected static int gameID;
+    protected static ChessGame.TeamColor teamcolor;
     public static HashMap<Integer, GameData> games = new HashMap<>();
     private final LoginClient loginClient;
     private final HomeClient homeClient;
@@ -15,6 +17,7 @@ public class Repl {
     public Repl(String url) {
         auth = "";
         gameID = 0;
+        teamcolor = null;
         loginClient = new LoginClient(url);
         homeClient = new HomeClient(url);
         gameClient = new GameClient(url);

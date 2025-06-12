@@ -127,4 +127,8 @@ public class ServerFacade {
             throw new ResponseException(status, "Error");
         }
     }
+
+    public class WebSocketFacade{
+
+    }
 }
