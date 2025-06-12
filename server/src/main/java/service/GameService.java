@@ -49,7 +49,6 @@ public class GameService {
 
     public Result.GetGameResult getGame(Request.GetGameRequest req) {
         Result.GetGameResult res = new Result.GetGameResult(GAME_DAO.getGame(req.gameID()));
-        System.out.println(res);
         return res;
     }
 }

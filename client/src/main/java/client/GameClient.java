@@ -73,15 +73,17 @@ public class GameClient {
 
     private void exit() {
         Repl.gameID = 0;
+        //add ws
         System.out.println("Returning to home.");
     }
 
     private void move(String startPos, String endPos) {
 
+        //add ws
     }
 
     private void resign() {
-
+        //add ws
     }
 
     private void legal(String origin) {

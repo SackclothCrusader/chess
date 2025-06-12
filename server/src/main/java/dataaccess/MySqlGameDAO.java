@@ -145,6 +145,26 @@ public class MySqlGameDAO implements GameDAO{
         }
     }
 
+    public GameData updateGame(int gameID, ChessGame game) throws DataAccessException{
+        try {
+            var conn = DatabaseManager.getConnection();
+            var statement = "UPDATE game SET game = ? WHERE gameID = ?";
+            try (var stmt = conn.prepareStatement(statement)) {
+                stmt.setString(1, gameToJson(game));
+                stmt.setInt(2, gameID);
+
+
+                if (stmt.executeUpdate() == 1) {
+                    return getGame(gameID);
+                } else {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error: something went wrong", e);
+        }
+    }
+
     private String gameToJson(ChessGame game) {
         var json = GSON.toJson(game);
         return json.toString();
