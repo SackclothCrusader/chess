@@ -17,6 +17,14 @@ public class GameClient {
     public boolean eval(String in) {
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
+
+        if (cmd.equals("make")) {
+            cmd = tokens[0] + " " + tokens[1];
+        }
+        else if (cmd.equals("redraw") || cmd.equals("highlight")) {
+            cmd = tokens[0] + " " + tokens[1] + " " + tokens[2];
+        }
+
         try {
             switch (cmd) {
                 case "help" -> help();
@@ -45,10 +53,16 @@ public class GameClient {
                 Commands:
                 - help
                     Display this page.
-                -exit
+                -redraw chess board
+                    Draws the game board.
+                -leave
                     Return to client home.
-                - quit
-                    End the current session and close 240 Chess client.
+                - make move <start position ([a-h][1-8])> <end position ([a-h][1-8])>
+                    Moves a piece from starting position to end position.
+                - resign
+                    Resign the game. Does not leave the game.
+                - highlight legal moves <position ([a-h][1-8])>
+                    Highlights legal moves on the board.
                """);
     }
 
@@ -199,6 +213,8 @@ public class GameClient {
     }
 
     private static void printBoard(String[][] board) {
+        System.out.println(EscapeSequences.ERASE_SCREEN);
+
         for (int i = 0; i < 10; i++) {
             for (int j =0; j < 10; j++) {
                 System.out.print(String.format("%-3s", board[i][j]) + EscapeSequences.RESET_TEXT_COLOR);
