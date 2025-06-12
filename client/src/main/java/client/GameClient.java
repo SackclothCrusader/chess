@@ -176,7 +176,10 @@ public class GameClient {
 
         //set highlight
         for (ChessPosition position : endLocations) {
-            board[position.getColumn()][position.getRow()] = EscapeSequences.SET_BG_COLOR_RED +
+            int row = (Repl.teamcolor == ChessGame.TeamColor.WHITE) ? (9 - position.getRow()) : (position.getRow());
+            int col = (Repl.teamcolor == ChessGame.TeamColor.BLACK) ? (9 - position.getColumn()) : (position.getColumn());
+
+            board[row][col] = EscapeSequences.SET_BG_COLOR_RED +
                     pieceToString(game.getBoard().getPiece(position));
         }
 
