@@ -1,11 +1,11 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 import ui.EscapeSequences;
+
+import java.util.Collection;
+import java.util.HashSet;
 
 public class GameClient {
     private static ServerFacade facade;
@@ -15,11 +15,6 @@ public class GameClient {
     }
 
     public boolean eval(String in) {
-        System.out.println("Printing black:");
-        printBoard(Repl.gameID, ChessGame.TeamColor.BLACK);
-        System.out.println("Printing white:");
-        printBoard(Repl.gameID, ChessGame.TeamColor.WHITE);
-
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
         try {
@@ -58,7 +53,8 @@ public class GameClient {
     }
 
     private void redraw() {
-        printBoard(Repl.gameID, Repl.teamcolor);
+        String[][] board = fillBoard(Repl.gameID, Repl.teamcolor);
+        printBoard(board);
     }
 
     private void exit() {
@@ -74,8 +70,9 @@ public class GameClient {
 
     }
 
-    private void legal(String pieceLocation) {
-
+    private void legal(String origin) {
+        String[][] board = setHighlight(stringToPos(origin));
+        printBoard(board);
     }
 
 
@@ -153,9 +150,55 @@ public class GameClient {
         return board;
     }
 
-    private static void printBoard(int gameID, ChessGame.TeamColor perspective) {
-        String[][] board = fillBoard(gameID, perspective);
+    private static String[][] setHighlight(ChessPosition origin) {
+        //init
+        String[][] board = fillBoard(Repl.gameID, Repl.teamcolor);
+        ChessGame game = getGame(Repl.auth, Repl.gameID).game();
+        Collection<ChessMove> validMoves = game.validMoves(origin);
+        Collection<ChessPosition> endLocations = new HashSet<>();
+        for (ChessMove move : validMoves) {
+            endLocations.add(move.getEndPosition());
+        }
 
+        //set highlight
+        for (ChessPosition position : endLocations) {
+            board[position.getColumn()][position.getRow()] = EscapeSequences.SET_BG_COLOR_RED +
+                    pieceToString(game.getBoard().getPiece(position));
+        }
+
+        return board;
+    }
+
+    private ChessPosition stringToPos(String in) throws IllegalArgumentException{
+        //init
+        char toCol = in.charAt(0);
+        char toRow = in.charAt(1);
+        int col;
+        int row;
+
+        //convert
+        switch (toCol) {
+            case 'a' -> col = 1;
+            case 'b' -> col = 2;
+            case 'c' -> col = 3;
+            case 'd' -> col = 4;
+            case 'e' -> col = 5;
+            case 'f' -> col = 6;
+            case 'g' -> col = 7;
+            case 'h' -> col = 8;
+            default -> throw new IllegalArgumentException();
+        };
+        row = Integer.parseInt(String.valueOf(toRow));
+
+        //safety
+        if (row < 1 || row > 8) {
+            throw new IllegalArgumentException();
+        }
+
+        return new ChessPosition(row, col);
+    }
+
+    private static void printBoard(String[][] board) {
         for (int i = 0; i < 10; i++) {
             for (int j =0; j < 10; j++) {
                 System.out.print(String.format("%-3s", board[i][j]) + EscapeSequences.RESET_TEXT_COLOR);
