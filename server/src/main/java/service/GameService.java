@@ -1,5 +1,6 @@
 package service;
 
+import chess.InvalidMoveException;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.DataAccessException;
@@ -49,6 +50,19 @@ public class GameService {
 
     public Result.GetGameResult getGame(Request.GetGameRequest req) {
         Result.GetGameResult res = new Result.GetGameResult(GAME_DAO.getGame(req.gameID()));
+        return res;
+    }
+
+    public Result.UpdateGameResult updateGame(Request.UpdateGameRequest req) throws BadRequestException, DataAccessException{
+        ChessGame game;
+        try {
+            game = GAME_DAO.getGame(req.gameID()).game();
+            game.makeMove(req.move());
+        } catch (InvalidMoveException e) {
+            throw new BadRequestException("Error: Bad move request");
+        }
+
+        Result.UpdateGameResult res = new Result.UpdateGameResult(GAME_DAO.updateGame(req.gameID(), game));
         return res;
     }
 }

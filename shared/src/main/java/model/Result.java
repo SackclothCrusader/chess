@@ -10,6 +10,6 @@ public class Result {
     public record CreateGameResult(int gameID){}
     public record JoinGameResult(){}
     public record GetGameResult(GameData game){}
-    public record UpdateGameResult(){}
+    public record UpdateGameResult(GameData game){}
     public record DeleteResult(){}
 }
