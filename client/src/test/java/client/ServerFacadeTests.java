@@ -6,7 +6,6 @@ import server.Server;
 import exceptions.ResponseException;
 
 public class ServerFacadeTests {
-
     private static Server server;
     private static ServerFacade facade;
 

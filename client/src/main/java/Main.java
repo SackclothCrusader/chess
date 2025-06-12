@@ -11,6 +11,4 @@ public class Main {
         Repl repl = new Repl(URL);
         repl.run();
     }
-
-    // change list games
 }
