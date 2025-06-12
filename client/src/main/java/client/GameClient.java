@@ -145,7 +145,7 @@ public class GameClient {
         }
     }
 
-    private static GameData getGame(String authToken, int gameID) {
+    public static GameData getGame(String authToken, int gameID) {
         return facade.getGame(authToken, gameID);
     }
 

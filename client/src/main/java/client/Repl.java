@@ -1,10 +1,13 @@
 package client;
 
+import model.GameData;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Repl {
     protected static String auth;
     protected static int gameID;
+    public static HashMap<Integer, GameData> games = new HashMap<>();
     private final LoginClient loginClient;
     private final HomeClient homeClient;
     private final GameClient gameClient;

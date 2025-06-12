@@ -3,7 +3,6 @@ package client;
 import chess.ChessGame;
 import exceptions.ResponseException;
 import model.GameData;
-import java.util.Collection;
 
 public class HomeClient {
     private ServerFacade facade;
@@ -61,7 +60,7 @@ public class HomeClient {
 
     private boolean create(String name){
         try {
-            facade.createGame(Repl.auth, name);
+            Repl.games.put(Repl.games.size()+1, GameClient.getGame(Repl.auth, facade.createGame(Repl.auth, name)));
             System.out.println("Game " + name + " has been created.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
@@ -70,14 +69,20 @@ public class HomeClient {
     }
 
     private boolean list(){
-        Collection<GameData> games = null;
         try {
-            games = facade.listGames(Repl.auth);
-            System.out.println("Games:");
-            for (GameData game : games) {
-                System.out.println(game);
+            Repl.games.clear();
+
+            int i = 1;
+            for (GameData game : facade.listGames(Repl.auth)) {
+                Repl.games.put(i, game);
+                i++;
             }
 
+            System.out.println("Games:");
+            for (i = 1; i <= Repl.games.size(); i++) {
+                GameData game = Repl.games.get(i);
+                System.out.println("Game ID: " + i + " || " + game);
+            }
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
         }
@@ -85,22 +90,35 @@ public class HomeClient {
     }
 
     private boolean join(int gameID, String color){
+        if (Repl.games.isEmpty() || !Repl.games.containsKey(gameID)) {
+            Repl.games.clear();
+            int i = 1;
+            for (GameData game : facade.listGames(Repl.auth)) {
+                Repl.games.put(i, game);
+                i++;
+            }
+        }
+
+        GameData game = Repl.games.get(gameID);
+        if (game == null) {
+            System.out.println("Invalid game selection.");
+            return false;
+        }
+
         ChessGame.TeamColor playerColor;
 
-        if (color.equals("white") || color.equals("w")) {
+        if (color.equalsIgnoreCase("white") || color.equalsIgnoreCase("w")) {
             playerColor = ChessGame.TeamColor.WHITE;
-        }
-        else if (color.equals("black") || color.equals("b")) {
+        } else if (color.equalsIgnoreCase("black") || color.equalsIgnoreCase("b")) {
             playerColor = ChessGame.TeamColor.BLACK;
-        }
-        else {
+        } else {
             System.out.println("Invalid color.");
             return false;
         }
 
         try {
-            facade.joinGame(Repl.auth, playerColor, gameID);
-            Repl.gameID = gameID;
+            Repl.gameID = game.gameID();
+            facade.joinGame(Repl.auth, playerColor, Repl.gameID);
             System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
