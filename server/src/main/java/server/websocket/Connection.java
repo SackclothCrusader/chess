@@ -1,15 +1,16 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.commands.UserGameCommand;
 
 import java.io.IOException;
 
 public class Connection {
-    public String player;
+    public UserGameCommand cmd;
     public Session session;
 
-    public Connection(String player, Session session) {
-        this.player = player;
+    public Connection(UserGameCommand cmd, Session session) {
+        this.cmd = cmd;
         this.session = session;
     }
 
