@@ -1,5 +1,6 @@
 package server;
 
+import server.websocket.WSHandler;
 import spark.*;
 import dataaccess.DatabaseManager;
 
@@ -19,6 +20,10 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+
+        //Websocket
+        Spark.webSocket("/ws", WSHandler.class);
+
         //Clear
         Spark.delete("/db", (req, res) -> Handler.ClearHandler.clear(req, res));
 

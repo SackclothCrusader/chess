@@ -30,7 +30,7 @@ public class GameClient {
                 case "help" -> help();
                 case "redraw chess board" -> redraw();
                 case "leave" -> exit();
-                case "make move" -> move(tokens[2], tokens[3]);
+                case "make move" -> move(tokens[2], tokens[3], tokens[4]);
                 case "resign" -> resign();
                 case "highlight legal moves" -> legal(tokens[3]);
                 default -> System.out.println("Unknown command. Type help to open the help menu.");
@@ -77,8 +77,8 @@ public class GameClient {
         System.out.println("Returning to home.");
     }
 
-    private void move(String startPos, String endPos) {
-
+    private void move(String startPos, String endPos, String promo) {
+        ChessMove move = new ChessMove(stringToPos(startPos), stringToPos(endPos), strToPromote(promo));
         //add ws
     }
 
@@ -228,6 +228,19 @@ public class GameClient {
         }
     }
 
+    private static ChessPiece.PieceType strToPromote(String piece) throws IllegalArgumentException{
+        return switch (piece) {
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            case "n" -> ChessPiece.PieceType.KNIGHT;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "b" -> ChessPiece.PieceType.BISHOP;
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "r" -> ChessPiece.PieceType.ROOK;
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            case "q" -> ChessPiece.PieceType.QUEEN;
+            default -> throw new IllegalArgumentException();
+        };
+    }
 
 
     private static String pieceToString (ChessPiece piece) {
