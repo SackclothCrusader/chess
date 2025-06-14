@@ -129,10 +129,41 @@ public class ConnectionManager {
         broadcastNotif(cmd.getGameID(), cmd.getAuthToken(), notif);
     }
 
-    public void resign(UserGameCommand cmd) {
+    public void resign(UserGameCommand cmd) throws Exception {
+        Connection connection = connections.get(cmd.getAuthToken());
+        if (connection == null) {
+            return;
+        }
+        if (isObserver(cmd)) {
+            connection.sendError(new ErrorMessage("You are an observer"));
+            return;
+        }
 
+        GameData data = gameDAO.getGame(cmd.getGameID());
+        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        ArrayList<String> players = new ArrayList<>();
+        players.add(data.whiteUsername());
+        players.add(data.blackUsername());
+
+        if (!players.contains(username)) {
+            connection.sendError(new ErrorMessage("You must be a player to resign"));
+            return;
+        }
+
+        GameService gameService = new GameService();
+        ChessGame.TeamColor usercolor = (username.equals(data.whiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+        Request.ResignGameRequest req = new Request.ResignGameRequest(cmd.getAuthToken(), cmd.getGameID(), usercolor);
+
+        try {
+            gameService.resign(req);
+        } catch (BadRequestException e) {
+            connection.sendError(new ErrorMessage("Bad move"));
+            return;
+        }
+
+        NotificationMessage notif = new NotificationMessage(username + " has resigned");
+        broadcastNotif(cmd.getGameID(), null, notif);
     }
-
 
     public void badAuth(Connection connection) throws Exception{
         connection.sendError(new ErrorMessage("Bad authentication"));

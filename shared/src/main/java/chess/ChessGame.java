@@ -124,6 +124,9 @@ public class ChessGame {
         if(gameBoard.getPiece(move.getStartPosition()).getTeamColor() != teamToPlay) {
             throw new InvalidMoveException();
         }
+        if(resign != null) {
+            throw new InvalidMoveException();
+        }
 
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         for(ChessMove i : validMoves) {
@@ -261,7 +264,11 @@ public class ChessGame {
         teamToPlay = team;
     }
 
-    public void resign(TeamColor team) {
-        resign = team;
+    public void resign(TeamColor team) throws InvalidMoveException{
+        if (resign == null) {
+            resign = team;
+            return;
+        }
+        throw new InvalidMoveException();
     }
 }

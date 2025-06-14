@@ -12,5 +12,6 @@ public class Request {
     public record JoinGameRequest(String authToken, ChessGame.TeamColor playerColor, int gameID){}
     public record GetGameRequest(String authToken, int gameID){}
     public record UpdateGameRequest(String authToken, int gameID, ChessMove move){}
+    public record ResignGameRequest(String authToken, int gameID, ChessGame.TeamColor color){}
     public record DeleteRequest(){}
 }

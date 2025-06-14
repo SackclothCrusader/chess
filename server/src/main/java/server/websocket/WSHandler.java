@@ -26,24 +26,22 @@ public class WSHandler {
         String type = json.get("commandType").getAsString();
 
         UserGameCommand cmd;
-
         switch (type) {
             case "MAKE_MOVE" -> cmd = GSON.fromJson(message, MakeMoveCommand.class);
             default -> cmd = GSON.fromJson(message, UserGameCommand.class);
         }
 
         String authToken = cmd.getAuthToken();
-
         if (!authenticate(authToken)) {
             MANAGER.badAuth(new Connection(cmd, session));
             return;
         }
 
         MANAGER.add(cmd, session);
-
         switch (cmd.getCommandType()) {
             case CONNECT -> connect(authToken);
             case MAKE_MOVE -> move((MakeMoveCommand) cmd);
+            case RESIGN -> MANAGER.resign(cmd);
             case LEAVE -> leave(cmd);
         }
     }

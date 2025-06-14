@@ -65,4 +65,15 @@ public class GameService {
         Result.UpdateGameResult res = new Result.UpdateGameResult(GAME_DAO.updateGame(req.gameID(), game));
         return res;
     }
+
+    public void resign(Request.ResignGameRequest req) throws BadRequestException, DataAccessException {
+        ChessGame game;
+        game = GAME_DAO.getGame(req.gameID()).game();
+        try {
+            game.resign(req.color());
+        } catch (InvalidMoveException e) {
+            throw new BadRequestException("Error: bad request");
+        }
+        GAME_DAO.updateGame(req.gameID(), game);
+    }
 }
