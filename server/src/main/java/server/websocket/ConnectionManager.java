@@ -129,6 +129,10 @@ public class ConnectionManager {
         broadcastNotif(cmd.getGameID(), cmd.getAuthToken(), notif);
     }
 
+    public void resign(UserGameCommand cmd) {
+
+    }
+
 
     public void badAuth(Connection connection) throws Exception{
         connection.sendError(new ErrorMessage("Bad authentication"));

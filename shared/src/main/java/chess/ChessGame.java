@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessGame {
     TeamColor teamToPlay;
     ChessBoard gameBoard;
+    TeamColor resign;
     ArrayList<ChessMove> moveHistory;
 
     @Override
@@ -76,6 +77,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) { //:(
+        if (resign != null) {
+            return new ArrayList<>();
+        }
+
         ChessPiece piece = new ChessPiece(gameBoard.getPiece(startPosition).getTeamColor(), gameBoard.getPiece(startPosition).getPieceType());
         ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>(piece.pieceMoves(gameBoard, startPosition));
 
@@ -254,5 +259,9 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         teamToPlay = team;
+    }
+
+    public void resign(TeamColor team) {
+        resign = team;
     }
 }
