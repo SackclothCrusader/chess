@@ -51,7 +51,6 @@ public class MySqlGameDAO implements GameDAO{
                 }
             }
         } catch (Exception e) {
-            System.out.println("dao issue");
             return null;
         }
     }

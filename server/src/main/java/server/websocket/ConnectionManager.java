@@ -1,12 +1,13 @@
 package server.websocket;
 
-import chess.ChessGame;
 import dataaccess.MySqlAuthDAO;
 import dataaccess.MySqlGameDAO;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
-import websocket.messages.ServerMessage;
+import websocket.messages.NotificationMessage;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,7 +25,7 @@ public class ConnectionManager {
         connections.remove(authToken);
     }
 
-    public void broadcastGame(int gameID, String excludeAuth, ServerMessage notification) throws Exception {
+    public void broadcastGame(int gameID, String excludeAuth, NotificationMessage notification) throws Exception {
         var removeList = new ArrayList<Connection>();
         var players = new ArrayList<String>();
 
@@ -34,7 +35,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen() && players.contains(authDAO.getAuthData(c.cmd.getAuthToken()).username())) {
                 if (!c.cmd.getAuthToken().equals(excludeAuth)) {
-                    c.send(notification);
+                    c.sendNotif(notification);
                 }
             } else if (!c.session.isOpen()) {
                 removeList.add(c);
@@ -50,12 +51,34 @@ public class ConnectionManager {
     public void join(String auth) throws Exception {
         //load game
         Connection connection = connections.get(auth);
-        ChessGame game = gameDAO.getGame(connection.cmd.getGameID()).game();
-        LoadGameMessage load = new LoadGameMessage(game);
+        GameData game = gameDAO.getGame(connection.cmd.getGameID());
+
+        if (game == null || game.game() == null) {
+            connection.sendError(new ErrorMessage("Bad gameID"));
+            return;
+        }
+
+        LoadGameMessage load = new LoadGameMessage(game.game());
         connection.sendLoad(load);
 
         //notify
-        ServerMessage notif = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        String user = authDAO.getAuthData(auth).username();
+        String msg;
+        if (user.equals(game.blackUsername())) {
+            msg = user + " joined the game as black.";
+        } else if (user.equals(game.whiteUsername())){
+            msg = user + " joined the game as white.";
+        } else {
+            msg = user + " joined the game as an observer.";
+        }
+
+        NotificationMessage notif = new NotificationMessage(msg);
         broadcastGame(connection.cmd.getGameID(), auth, notif);
     }
+
+    public void badAuth(Connection connection) throws Exception{
+        connection.sendError(new ErrorMessage("Bad authentication"));
+    }
+
+
 }

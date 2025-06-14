@@ -25,7 +25,8 @@ public class WSHandler {
         String authToken = cmd.getAuthToken();
 
         if (!authenticate(authToken)) {
-            throw new UnauthorizedException("Error: unauthorized");
+            MANAGER.badAuth(new Connection(cmd, session));
+            return;
         }
 
         MANAGER.add(cmd, session);
