@@ -42,6 +42,10 @@ public class GameService {
         }
         if (request.playerColor() == ChessGame.TeamColor.WHITE && game.whiteUsername() != null
         || request.playerColor() == ChessGame.TeamColor.BLACK && game.blackUsername() != null) {
+            if (request.playerColor() == ChessGame.TeamColor.WHITE && game.whiteUsername().equals(user.username()) ||
+                    request.playerColor() == ChessGame.TeamColor.BLACK && game.blackUsername().equals(user.username())) {
+                return new Result.JoinGameResult();
+            }
             throw new AlreadyTakenException("Error: already taken");
         }
         GAME_DAO.addPlayer(user.username(), request.playerColor(), request.gameID());

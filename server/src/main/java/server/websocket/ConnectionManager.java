@@ -165,6 +165,19 @@ public class ConnectionManager {
         broadcastNotif(cmd.getGameID(), null, notif);
     }
 
+    public void leave(UserGameCommand cmd) throws Exception{
+        Connection connection = connections.get(cmd.getAuthToken());
+        if (connections.get(cmd.getAuthToken()) == null) {
+            connection.sendError(new ErrorMessage("Session not found"));
+            return;
+        }
+        remove(cmd.getAuthToken());
+
+        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        NotificationMessage notif = new NotificationMessage(username + " has left ");
+        broadcastNotif(cmd.getGameID(), cmd.getAuthToken(), notif);
+    }
+
     public void badAuth(Connection connection) throws Exception{
         connection.sendError(new ErrorMessage("Bad authentication"));
     }

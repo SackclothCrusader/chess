@@ -42,17 +42,13 @@ public class WSHandler {
             case CONNECT -> connect(authToken);
             case MAKE_MOVE -> move((MakeMoveCommand) cmd);
             case RESIGN -> MANAGER.resign(cmd);
-            case LEAVE -> leave(cmd);
+            case LEAVE -> MANAGER.leave(cmd);
         }
     }
 
 
     private void connect(String auth) throws Exception {
         MANAGER.join(auth);
-    }
-
-    private void leave(UserGameCommand cmd) throws Exception {
-        MANAGER.remove(cmd.getAuthToken());
     }
 
     private void move(MakeMoveCommand cmd) throws Exception{
