@@ -6,6 +6,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.Session;
 import service.AuthService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import com.google.gson.*;
 
@@ -21,7 +22,16 @@ public class WSHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
-        UserGameCommand cmd = GSON.fromJson(message, UserGameCommand.class);
+        JsonObject json = JsonParser.parseString(message).getAsJsonObject();
+        String type = json.get("commandType").getAsString();
+
+        UserGameCommand cmd;
+
+        switch (type) {
+            case "MAKE_MOVE" -> cmd = GSON.fromJson(message, MakeMoveCommand.class);
+            default -> cmd = GSON.fromJson(message, UserGameCommand.class);
+        }
+
         String authToken = cmd.getAuthToken();
 
         if (!authenticate(authToken)) {
@@ -30,11 +40,14 @@ public class WSHandler {
         }
 
         MANAGER.add(cmd, session);
+
         switch (cmd.getCommandType()) {
             case CONNECT -> connect(authToken);
+            case MAKE_MOVE -> move((MakeMoveCommand) cmd);
             case LEAVE -> leave(cmd);
         }
     }
+
 
     private void connect(String auth) throws Exception {
         MANAGER.join(auth);
@@ -42,5 +55,9 @@ public class WSHandler {
 
     private void leave(UserGameCommand cmd) throws Exception {
         MANAGER.remove(cmd.getAuthToken());
+    }
+
+    private void move(MakeMoveCommand cmd) throws Exception{
+        MANAGER.makeMove(cmd);
     }
 }
