@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import dataaccess.MySqlAuthDAO;
 import dataaccess.MySqlGameDAO;
 import exceptions.BadRequestException;
@@ -31,13 +32,9 @@ public class ConnectionManager {
 
     public void broadcastNotif(int gameID, String excludeAuth, NotificationMessage notification) throws Exception {
         var removeList = new ArrayList<Connection>();
-        var players = new ArrayList<String>();
-
-        players.add(gameDAO.getGame(gameID).whiteUsername());
-        players.add(gameDAO.getGame(gameID).blackUsername());
 
         for (var c : connections.values()) {
-            if (c.session.isOpen() && players.contains(authDAO.getAuthData(c.cmd.getAuthToken()).username())) {
+            if (c.session.isOpen() && c.cmd.getGameID() == gameID) {
                 if (!c.cmd.getAuthToken().equals(excludeAuth)) {
                     c.sendNotif(notification);
                 }
@@ -54,13 +51,9 @@ public class ConnectionManager {
 
     public void broadcastLoad(int gameID, LoadGameMessage load) throws Exception {
         var removeList = new ArrayList<Connection>();
-        var players = new ArrayList<String>();
-
-        players.add(gameDAO.getGame(gameID).whiteUsername());
-        players.add(gameDAO.getGame(gameID).blackUsername());
 
         for (var c : connections.values()) {
-            if (c.session.isOpen() && players.contains(authDAO.getAuthData(c.cmd.getAuthToken()).username())) {
+            if (c.session.isOpen() && c.cmd.getGameID() == gameID) {
                 c.sendLoad(load);
             } else if (!c.session.isOpen()) {
                 removeList.add(c);
@@ -109,20 +102,28 @@ public class ConnectionManager {
             connection.sendError(new ErrorMessage("You are an observer"));
             return;
         }
+        GameData data = gameDAO.getGame(cmd.getGameID());
+        ChessGame.TeamColor colorToPlay = data.game().getTeamTurn();
+        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        String activePlayer = (colorToPlay == ChessGame.TeamColor.WHITE) ? data.whiteUsername() : data.blackUsername();
+
+        if (!username.equals(activePlayer)) {
+            connection.sendError(new ErrorMessage("You cannot play now"));
+            return;
+        }
 
         GameService gameService = new GameService();
         Request.UpdateGameRequest req = new Request.UpdateGameRequest(cmd.getAuthToken(), cmd.getGameID(), cmd.getMove());
 
-        GameData game;
         try {
-            game = gameService.updateGame(req).game();
+            GameData game = gameService.updateGame(req).game();
+            LoadGameMessage load = new LoadGameMessage(game.game());
+            broadcastLoad(cmd.getGameID(), load);
         } catch (BadRequestException e) {
             connection.sendError(new ErrorMessage("Bad move"));
             return;
         }
 
-        LoadGameMessage load = new LoadGameMessage(game.game());
-        broadcastLoad(cmd.getGameID(), load);
 
         NotificationMessage notif = new NotificationMessage(cmd.getMove().toString());
         broadcastNotif(cmd.getGameID(), cmd.getAuthToken(), notif);

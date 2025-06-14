@@ -18,14 +18,14 @@ public class GameClient {
         var tokens = in.toLowerCase().split(" ");
         var cmd = (tokens.length > 0) ? tokens[0] : "";
 
-        if (cmd.equals("make")) {
-            cmd = tokens[0] + " " + tokens[1];
-        }
-        else if (cmd.equals("redraw") || cmd.equals("highlight")) {
-            cmd = tokens[0] + " " + tokens[1] + " " + tokens[2];
-        }
 
         try {
+            if (cmd.equals("make")) {
+                cmd = tokens[0] + " " + tokens[1];
+            }
+            else if (cmd.equals("redraw") || cmd.equals("highlight")) {
+                cmd = tokens[0] + " " + tokens[1] + " " + tokens[2];
+            }
             switch (cmd) {
                 case "help" -> help();
                 case "redraw chess board" -> redraw();
@@ -149,8 +149,8 @@ public class GameClient {
         if(perspective == ChessGame.TeamColor.WHITE) {
             for (int i = 1; i <= 8; i++) {
                 for (int j = 1; j <= 8; j++) {
-                    ChessPiece piece = game.getPiece(new ChessPosition(i, j));
-                    board[9-i][9-j] += pieceToString(piece);
+                    ChessPiece piece = game.getPiece(new ChessPosition(9 - i, j));
+                    board[i][j] += pieceToString(piece);
                 }
             }
         }
@@ -254,8 +254,8 @@ public class GameClient {
                 case KNIGHT -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_KNIGHT;
                 case BISHOP -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_BISHOP;
                 case ROOK -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_ROOK;
-                case KING -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_KING;
-                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_QUEEN;
+                case KING -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_QUEEN;
+                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_WHITE + EscapeSequences.BLACK_KING;
             };
         }
         else {
@@ -264,8 +264,8 @@ public class GameClient {
                 case KNIGHT -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_KNIGHT;
                 case BISHOP -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_BISHOP;
                 case ROOK -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_ROOK;
-                case KING -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_KING;
-                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_QUEEN;
+                case KING -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_QUEEN;
+                case QUEEN -> EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.BLACK_KING;
             };
         }
     }

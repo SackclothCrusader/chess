@@ -123,6 +123,7 @@ public class HomeClient {
             System.out.println("Game has been joined.");
         } catch (ResponseException e) {
             System.out.println("There was an internal error. Please try again.");
+            Repl.gameID = 0;
             throw new RuntimeException(e);
         }
         return false;
