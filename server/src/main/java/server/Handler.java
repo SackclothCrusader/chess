@@ -180,7 +180,7 @@ public class Handler {
                 return GSON.toJson(e);
             } catch (AlreadyTakenException e) {
                 try {
-                    if (ConnectionManager.connections.get(authToken) == null && !ConnectionManager.connections.isEmpty()) {
+                    if (ConnectionManager.CONNECTIONS.get(authToken) == null && !ConnectionManager.CONNECTIONS.isEmpty()) {
                         joinGameResult = new GameService().joinGameOverride(joinGameRequest);
                         return GSON.toJson(joinGameRequest);
                     }

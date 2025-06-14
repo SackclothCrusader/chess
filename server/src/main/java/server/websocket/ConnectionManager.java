@@ -17,23 +17,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import service.GameService;
 
 public class ConnectionManager {
-    public static final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
-    private static final MySqlGameDAO gameDAO = new MySqlGameDAO();
-    private static final MySqlAuthDAO authDAO = new MySqlAuthDAO();
+    public static final ConcurrentHashMap<String, Connection> CONNECTIONS = new ConcurrentHashMap<>();
+    private static final MySqlGameDAO GAME_DAO = new MySqlGameDAO();
+    private static final MySqlAuthDAO AUTH_DAO = new MySqlAuthDAO();
 
     public void add(UserGameCommand cmd, Session session) {
         var connection = new Connection(cmd, session);
-        connections.put(cmd.getAuthToken(), connection);
+        CONNECTIONS.put(cmd.getAuthToken(), connection);
     }
 
     public void remove(String authToken) {
-        connections.remove(authToken);
+        CONNECTIONS.remove(authToken);
     }
 
     public void broadcastNotif(int gameID, String excludeAuth, NotificationMessage notification) throws Exception {
         var removeList = new ArrayList<Connection>();
 
-        for (var c : connections.values()) {
+        for (var c : CONNECTIONS.values()) {
             if (c.session.isOpen() && c.cmd.getGameID() == gameID) {
                 if (!c.cmd.getAuthToken().equals(excludeAuth)) {
                     c.sendNotif(notification);
@@ -43,16 +43,16 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
+        // Clean up any CONNECTIONS that were left open.
         for (var c : removeList) {
-            connections.remove(c.cmd.getAuthToken());
+            CONNECTIONS.remove(c.cmd.getAuthToken());
         }
     }
 
     public void broadcastLoad(int gameID, LoadGameMessage load) throws Exception {
         var removeList = new ArrayList<Connection>();
 
-        for (var c : connections.values()) {
+        for (var c : CONNECTIONS.values()) {
             if (c.session.isOpen() && c.cmd.getGameID() == gameID) {
                 c.sendLoad(load);
             } else if (!c.session.isOpen()) {
@@ -61,14 +61,14 @@ public class ConnectionManager {
         }
 
         for (var c : removeList) {
-            connections.remove(c.cmd.getAuthToken());
+            CONNECTIONS.remove(c.cmd.getAuthToken());
         }
     }
 
     public void join(String auth) throws Exception {
         //load game
-        Connection connection = connections.get(auth);
-        GameData game = gameDAO.getGame(connection.cmd.getGameID());
+        Connection connection = CONNECTIONS.get(auth);
+        GameData game = GAME_DAO.getGame(connection.cmd.getGameID());
 
         if (game == null || game.game() == null) {
             connection.sendError(new ErrorMessage("Bad gameID"));
@@ -79,7 +79,7 @@ public class ConnectionManager {
         connection.sendLoad(load);
 
         //notify
-        String user = authDAO.getAuthData(auth).username();
+        String user = AUTH_DAO.getAuthData(auth).username();
         String msg;
         if (user.equals(game.blackUsername())) {
             msg = user + " joined the game as black.";
@@ -94,7 +94,7 @@ public class ConnectionManager {
     }
 
     public void makeMove(MakeMoveCommand cmd) throws Exception {
-        Connection connection = connections.get(cmd.getAuthToken());
+        Connection connection = CONNECTIONS.get(cmd.getAuthToken());
         if (connection == null) {
             return;
         }
@@ -102,9 +102,9 @@ public class ConnectionManager {
             connection.sendError(new ErrorMessage("You are an observer"));
             return;
         }
-        GameData data = gameDAO.getGame(cmd.getGameID());
+        GameData data = GAME_DAO.getGame(cmd.getGameID());
         ChessGame.TeamColor colorToPlay = data.game().getTeamTurn();
-        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        String username = AUTH_DAO.getAuthData(cmd.getAuthToken()).username();
         String activePlayer = (colorToPlay == ChessGame.TeamColor.WHITE) ? data.whiteUsername() : data.blackUsername();
 
         if (!username.equals(activePlayer)) {
@@ -130,7 +130,7 @@ public class ConnectionManager {
     }
 
     public void resign(UserGameCommand cmd) throws Exception {
-        Connection connection = connections.get(cmd.getAuthToken());
+        Connection connection = CONNECTIONS.get(cmd.getAuthToken());
         if (connection == null) {
             return;
         }
@@ -139,8 +139,8 @@ public class ConnectionManager {
             return;
         }
 
-        GameData data = gameDAO.getGame(cmd.getGameID());
-        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        GameData data = GAME_DAO.getGame(cmd.getGameID());
+        String username = AUTH_DAO.getAuthData(cmd.getAuthToken()).username();
         ArrayList<String> players = new ArrayList<>();
         players.add(data.whiteUsername());
         players.add(data.blackUsername());
@@ -166,14 +166,14 @@ public class ConnectionManager {
     }
 
     public void leave(UserGameCommand cmd) throws Exception{
-        Connection connection = connections.get(cmd.getAuthToken());
-        if (connections.get(cmd.getAuthToken()) == null) {
+        Connection connection = CONNECTIONS.get(cmd.getAuthToken());
+        if (CONNECTIONS.get(cmd.getAuthToken()) == null) {
             connection.sendError(new ErrorMessage("Session not found"));
             return;
         }
         remove(cmd.getAuthToken());
 
-        String username = authDAO.getAuthData(cmd.getAuthToken()).username();
+        String username = AUTH_DAO.getAuthData(cmd.getAuthToken()).username();
         NotificationMessage notif = new NotificationMessage(username + " has left ");
         broadcastNotif(cmd.getGameID(), cmd.getAuthToken(), notif);
     }
@@ -183,8 +183,8 @@ public class ConnectionManager {
     }
 
     private boolean isObserver(UserGameCommand cmd) throws Exception{
-        GameData game = gameDAO.getGame(cmd.getGameID());
-        String user = authDAO.getAuthData(cmd.getAuthToken()).username();
+        GameData game = GAME_DAO.getGame(cmd.getGameID());
+        String user = AUTH_DAO.getAuthData(cmd.getAuthToken()).username();
 
         if (game.whiteUsername().equals(user) || game.blackUsername().equals(user)) {
             return false;

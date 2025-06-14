@@ -26,17 +26,21 @@ public class HomeClient {
                 case "play game" -> join(Integer.parseInt(tokens[2]), tokens[3]);
                 case "observe game" -> observe(Integer.parseInt(tokens[2]));
                 case "quit" -> quit();
+                //break
                 default -> {
                     System.out.println("Unknown command. Type help to open the help menu.");
                     yield false;
                 }
+                //it
             };
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Incorrect number of arguments for " + cmd + "\nType help to open the help menu.");
         } catch (IllegalArgumentException e) {
+            //up
             System.out.println("Incorrect argument type for " + cmd + "\nType help to open the help menu.");
         } catch (Exception e) {
             System.out.println("There was an error with command " + cmd + "\nType help to open the help menu.");
+            //more
         }
         return false;
     }
