@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import service.GameService;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
     private static final MySqlGameDAO gameDAO = new MySqlGameDAO();
     private static final MySqlAuthDAO authDAO = new MySqlAuthDAO();
 

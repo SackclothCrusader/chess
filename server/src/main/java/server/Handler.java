@@ -5,6 +5,7 @@ import chess.ChessGame;
 import com.google.gson.*;
 import model.Request;
 import model.Result;
+import server.websocket.ConnectionManager;
 import service.AuthService;
 import service.ClearService;
 import service.GameService;
@@ -178,6 +179,15 @@ public class Handler {
                 res.status(400);
                 return GSON.toJson(e);
             } catch (AlreadyTakenException e) {
+                try {
+                    if (ConnectionManager.connections.get(authToken) == null) {
+                        joinGameResult = new GameService().joinGameOverride(joinGameRequest);
+                        return GSON.toJson(joinGameRequest);
+                    }
+                } catch (DataAccessException ex) {
+                    res.status(500);
+                    return GSON.toJson(ex);
+                }
                 res.status(403);
                 return GSON.toJson(e);
             } catch (DataAccessException e) {
@@ -185,7 +195,7 @@ public class Handler {
                 return GSON.toJson(e);
             }
 
-            return new Gson().toJson(joinGameResult);
+            return GSON.toJson(joinGameResult);
         }
 
         //get game [GET] /play
